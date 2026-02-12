@@ -35,4 +35,29 @@ public abstract class Animal implements Entity, AnimalInfo{
         this.regionMngr = null;
     }
 
+    protected Animal(Animal p1, Animal p2){
+        this.geneticCode = p1.getGeneticCode();
+        this.diet = p1.getDiet();
+        this.mateStrategy = p2.mateStrategy;
+        this.dest = null;
+        this.baby = null;
+        this.mateTarget = null;
+        this.regionMngr = null;
+        this.state = State.NORMAL;
+        this.desire = 0.0;
+        this.energy = (p1.getEnergy() + p2.getEnergy()) /2;
+        this.pos = p1.getPosition().plus(Vector2D.getRandomVector(-1,1).scale(60.0*(Utils.RAND.nextGaussian()+1)));
+        this.sightRange = Utils.getRandomizedParameter((p1.getSightRange()+p2.getSightRange())/2,0.2);
+        this.speed = Utils.getRandomizedParameter((p1.getSpeed()+p2.getSpeed())/2, 0.2);
+    }
+
+    void init(AnimalMapView regMngr){
+        this.regionMngr = regMngr;
+        if(this.pos == null){
+            double x = Utils.RAND.nextDouble() * (regionMngr.getWidth() - 1);
+            doble y = Utils.RAND.nextDouble() * (regionMngr.getHeight() - 1);
+            this.pos = new Vector2D(x,y);
+        }
+    }
+
 }

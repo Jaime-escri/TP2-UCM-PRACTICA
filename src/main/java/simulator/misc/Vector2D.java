@@ -1,5 +1,7 @@
 package simulator.misc;
 
+import java.util.Random;
+
 import org.json.JSONArray;
 
 public class Vector2D {
@@ -149,6 +151,13 @@ public class Vector2D {
   // return a string representation of the vector
   public String toString() {
     return "[" + x + "," + y + "]";
+  }
+
+  public static Vector2D getRandomVector(int i, int j) {
+      Random random = new Random();
+      i = random.nextInt(100);
+      j = random.nextInt(100);
+      return new Vector2D(i,j);
   }
 
 }
