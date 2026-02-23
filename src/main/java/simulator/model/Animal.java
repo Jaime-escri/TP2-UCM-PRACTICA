@@ -171,4 +171,12 @@ public abstract class Animal implements Entity, AnimalInfo{
         return mateStrategy; 
     }
 
+    protected void setPosition(double x, double y){
+        this.pos = new Vector2D(x,y);
+    }
+
+    protected Animal getMateTarget(){
+        return this.mateTarget;
+    }
+
 }
