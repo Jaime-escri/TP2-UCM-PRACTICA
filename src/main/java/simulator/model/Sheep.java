@@ -41,6 +41,7 @@ public class Sheep extends Animal {
         assert(this.getDesire() >=0.0 && this.getEnergy() <= 100.0);
         
         searchDangerousAnimal();
+        
     }
 
     public void searchDangerousAnimal(){
@@ -63,6 +64,9 @@ public class Sheep extends Animal {
             this.setDestination(this.getPosition().plus(this.getPosition().minus(dangerSource.getPosition()).direction()));
             this.move(2.0*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
             this.addAge(dt);
+        }
+
+        if(dangerSource == null ){
             
         }
     }
