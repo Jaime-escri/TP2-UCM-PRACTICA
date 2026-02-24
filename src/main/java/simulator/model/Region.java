@@ -1,6 +1,7 @@
 package simulator.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -24,13 +25,18 @@ public class Region implements Entity, FoodSupplier, RegionInfo{
         return list;
     }
 
-    @Override
-    public double getfood(AnimalInfo a, double dt) {
-        // TODO: Buscar la región del animal en el mapa y pedirle comida.
-        return 0.0;
+    public void update(double dt) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
-    @Override
-    public void update(double dt){}
+    public double getfood(AnimalInfo a, double dt) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getfood'");
+    }
 
+    public Collection<?> asJSON() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'asJSON'");
+    }
 }

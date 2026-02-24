@@ -1,11 +1,11 @@
 package simulator.model;
 
 public enum Diet {
-    HERVIBORE,
+    HERBIVORE,
     CARNIVORE;
 
     public boolean isHervibore(){
-        return this == HERVIBORE;
+        return this == HERBIVORE;
     }
 
     public boolean isCarnivore(){
