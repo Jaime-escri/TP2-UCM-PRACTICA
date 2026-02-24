@@ -115,12 +115,12 @@ public abstract class Animal implements Entity, AnimalInfo{
         this.age += a;
     }
 
-    public void setEnergy(double e){
-        this.energy -= e;
+    public void setEnergy(double e) {
+        this.energy = e;
     }
 
-    public void setDesire(double d){
-        this.desire += d;
+    public void setDesire(double d) {
+        this.desire = d;
     }
 
     //Getters y setters
@@ -179,4 +179,26 @@ public abstract class Animal implements Entity, AnimalInfo{
         return this.mateTarget;
     }
 
+    //Wolf y sheep comparten el adjustPosition:
+    public void adjustPosition(){
+        double x = this.getPosition().getX();
+        double y = this.getPosition().getY();
+        double width = this.getRegionMngr().getWidth();
+        double height = this.getRegionMngr().getHeight();
+
+        if(x >= width) x -= width;
+        else if(x < 0.0) x += width;
+        else if(y >= height) y -= height;
+        else if(y < 0.0) y += height;
+
+        setPosition(x, y);
+    }
+
+    //Ambos, si no están DEAD, piden comida:
+    public void askFood(double dt){
+        if(this.getState() != State.DEAD){
+            double askFood = this.getRegionMngr().getfood(this, dt);
+            this.setEnergy(askFood); //Mirar que la comida esté entre 0.0 y 100
+        }
+    }
 }
