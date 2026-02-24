@@ -2,7 +2,7 @@ package simulator.model;
 
 public enum State {
     NORMAL,
-    MAE,
+    MATE,
     HUNGER,
     DANGER,
     DEAD
