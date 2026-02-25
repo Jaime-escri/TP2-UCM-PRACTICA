@@ -1,5 +1,6 @@
 package simulator.model;
 
-public class RegionInfo {
+public interface RegionInfo {
+
     
-}
+} 
