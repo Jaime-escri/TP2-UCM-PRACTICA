@@ -12,8 +12,8 @@ import simulator.misc.Vector2D;
 
 public class RegionManager implements AnimalMapView{
     //Dimensiones del mapa
-    private double width;
-    private double height;
+    private int width;
+    private int height;
     private int cols;
     private int rows;
     //Tamaño de la celda
@@ -24,7 +24,7 @@ public class RegionManager implements AnimalMapView{
 
     private Map<AnimalInfo, Region> animalRegion;
 
-    public RegionManager(int cols, int rows, double width, double height){
+    public RegionManager(int cols, int rows, int width, int height){
         this.width = width;
         this.height = height;
         this.cols = cols;
@@ -134,8 +134,8 @@ public class RegionManager implements AnimalMapView{
     //Hasta aquí el TODO
     @Override public int getCols() { return cols; }
     @Override public int getRows() { return rows; }
-    @Override public double  getWidth() { return width; }
-    @Override public double getHeight() { return this.height; }
+    @Override public int  getWidth() { return width; }
+    @Override public int getHeight() { return this.height; }
     @Override public double getRegionWidth() { return regionWidth; }
     @Override public double getRegionHeight() { return regionHeight; }
 

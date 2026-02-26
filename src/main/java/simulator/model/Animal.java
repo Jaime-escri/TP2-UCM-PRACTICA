@@ -1,6 +1,5 @@
 package simulator.model;
 
-import org.json.JSONObject;
 
 import simulator.misc.Utils;
 import simulator.misc.Vector2D;
@@ -202,7 +201,7 @@ public abstract class Animal implements Entity, AnimalInfo{
         setPosition(x, y);
     }
 
-    
+
 
     //Ambos, si no están DEAD, piden comida:
     public void askFood(double dt){

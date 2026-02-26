@@ -2,11 +2,16 @@ package simulator.control;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import simulator.model.AnimalInfo;
+import simulator.model.MapInfo;
 import simulator.model.Simulator;
+import simulator.view.SimpleObjectViewer;
 
 public class Controller {
     private Simulator sim;
@@ -53,23 +58,40 @@ public class Controller {
         }
     }
 
-
-    public void run(double t, double dt, boolean sv, OutputStream out){
-        PrintStream p = new PrintStream(out);
-        if(sv){
-            p.println(sim.asJSON().toString());
-        }
-
-        while(sim.getTime() <= t){
-            sim.advance(dt);
-        }
-
-        if(sv){
-            p.println(sim.asJSON().toString());
-        }
+    private List<SimpleObjectViewer.ObjInfo> toAnimalsInfo(List<? extends AnimalInfo> animals) {
+    List<SimpleObjectViewer.ObjInfo> ol = new ArrayList<>(animals.size());
+    for (AnimalInfo a : animals) {
+        // Se extrae el código genético (etiqueta), la posición X e Y, y un tamaño (ej. 8)
+        ol.add(new SimpleObjectViewer.ObjInfo(a.getGeneticCode(), (int) a.getPosition().getX(), (int) a.getPosition().getY(), 8));
     }
+    return ol;
+}
 
 
-    
+   public void run(double t, double dt, boolean sv, OutputStream out) {
+        JSONObject result = new JSONObject(); // Para el JSON final
+        PrintStream p = new PrintStream(out);
+        SimpleObjectViewer view = null;
 
+        // Guardamos el estado inicial
+        result.put("in", sim.asJSON());
+
+        if (sv) {
+            MapInfo m = sim.getMapInfo();
+            view = new SimpleObjectViewer("[ECOSYSTEM]", m.getWidth(), m.getHeight(), m.getCols(), m.getRows());
+            view.update(toAnimalsInfo(sim.getAnimals()), sim.getTime(), dt);
+        }
+
+        // Bucle de simulación
+        while (sim.getTime() <= t) {
+            sim.advance(dt);
+            if (sv) view.update(toAnimalsInfo(sim.getAnimals()), sim.getTime(), dt);
+        }
+
+        // Guardamos el estado final y lo imprimimos todo junto
+        result.put("out", sim.asJSON());
+        p.println(result.toString(2)); // El '2' es para que el JSON sea legible
+
+        if (sv) view.close();
+    }
 }

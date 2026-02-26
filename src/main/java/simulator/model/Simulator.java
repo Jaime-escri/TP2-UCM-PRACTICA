@@ -15,7 +15,7 @@ public class Simulator implements JSONable{
     private List<Animal> animalList;
     private double time;
 
-    public Simulator(int cols, int rows, double width, double height, Factory<Animal> animalsFactory, Factory<Region> regionsFactory){
+    public Simulator(int cols, int rows, int width, int height, Factory<Animal> animalsFactory, Factory<Region> regionsFactory){
         this.regMnr = new RegionManager(cols, rows, width, height);
         this.animalList = new ArrayList<>();
         this.animals = animalsFactory;

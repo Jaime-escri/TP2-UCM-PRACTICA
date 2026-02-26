@@ -184,8 +184,8 @@ public class Main {
 
     int cols = jo.getInt("cols");
     int rows = jo.getInt("rows");
-    double width = jo.getDouble("width");
-    double height = jo.getDouble("height");
+    int width = jo.getInt("width");
+    int height = jo.getInt("height");
     sim = new Simulator(cols, rows, width, height, selecionAnimalFactory, selectionRegionFactory);
     controller = new Controller(sim);
     controller.loadData(jo);
