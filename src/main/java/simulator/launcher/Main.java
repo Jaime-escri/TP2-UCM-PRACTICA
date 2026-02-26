@@ -2,7 +2,9 @@ package simulator.launcher;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +46,9 @@ public class Main {
   private static Controller controller;
 
   private final static Double DEFAULT_DELTA_TIME = 0.03; 
+  private final static String outFile = null;
+  private final static boolean simpleViewer= false;
+  private static Double deltaTime = 0.1;
 
   private enum ExecMode {
     BATCH("batch", "Batch mode"), GUI("gui", "Graphical User Interface mode");
@@ -64,6 +69,23 @@ public class Main {
       return desc;
     }
   }
+
+  private static void parseDeltaTimeOption(CommandLine line) throws ParseException {
+    String dt = line.getOptionValue("dt", "0.1");
+    try {
+        deltaTime = Double.parseDouble(dt);
+    } catch (Exception e) {
+        throw new ParseException("Invalid value for delta-time: " + dt);
+    }
+  }
+
+    private static void parseOutFileOption(CommandLine line) {
+      outFile = line.getOptionValue("o");
+    }
+
+    private static void parseSimpleViewerOption(CommandLine line) {
+      simpleViewer = line.hasOption("sv");
+    }
 
   // default values for some parameters
   //
@@ -89,6 +111,9 @@ public class Main {
       parseHelpOption(line, cmdLineOptions);
       parseInFileOption(line);
       parseTimeOption(line);
+      parseDeltaTimeOption(line);
+      parseOutFileOption(line);
+      parseSimpleViewerOption(line);
 
       // if there are some remaining arguments, then something wrong is
       // provided in the command line!
@@ -110,6 +135,15 @@ public class Main {
 
   private static Options buildOptions() {
     Options cmdLineOptions = new Options();
+
+    //dt
+    cmdLineOptions.addOption(Option.builder("dt").longOpt("delta-time").desc("A real number representing the time step. Default value: 0.1.").build());
+
+    //output file -o
+    cmdLineOptions.addOption(Option.builder("o").longOpt("output").desc("A file where output is written.").build());
+
+    //Simple viewer -sv
+    cmdLineOptions.addOption(Option.builder("sv").longOpt("simple-viewer").desc("If present, show the graphical viewer.").build());
 
     // help
     cmdLineOptions.addOption(Option.builder("h").longOpt("help").desc("Print this message.").build());
@@ -189,7 +223,9 @@ public class Main {
     sim = new Simulator(cols, rows, width, height, selecionAnimalFactory, selectionRegionFactory);
     controller = new Controller(sim);
     controller.loadData(jo);
-    controller.run(time, DEFAULT_DELTA_TIME, true, System.out);
+
+    OutputStream os = outFile == null ? System.out : new FileOutputStream(new File(outFile));
+    controller.run(time, DEFAULT_DELTA_TIME, simpleViewer, os);
 
   }
 
@@ -220,4 +256,6 @@ public class Main {
       e.printStackTrace();
     }
   }
+
+  
 }
