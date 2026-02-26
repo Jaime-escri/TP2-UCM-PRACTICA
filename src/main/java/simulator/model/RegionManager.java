@@ -45,8 +45,13 @@ public class RegionManager implements AnimalMapView{
         Vector2D pos = a.getPosition();
         int col = (int) (pos.getX() / regionWidth);
         int row = (int) (pos.getY() / regionHeight);
-        if(col>=cols) col = cols-1;
-        if(row >= rows) row = rows- 1;
+
+        if(col < 0) col = 0;
+        if(col >= cols) col = cols -1;
+
+        if(row < 0) row = 0;
+        if(row >= rows) row = rows-1;
+        
         return regions[row][col];
     }
 
@@ -68,6 +73,8 @@ public class RegionManager implements AnimalMapView{
     }
 
     public void registerAnimal(Animal a) {
+
+        a.init(this);
         //Obtengo al region
         Region r = getRegionInstance(a);
 
@@ -76,9 +83,6 @@ public class RegionManager implements AnimalMapView{
 
         //Aviso que el animal esta en la region
         animalRegion.put(a, r);
-
-        // 4. Llamar al método init del animal pasándole una referencia a este gestor (this) esto es vital para que el animal pueda consultar el mapa después
-        a.init(this);
     }
 
     public void unregisterAnimal(Animal a) {
@@ -165,5 +169,4 @@ public class RegionManager implements AnimalMapView{
 
         return out;
     }
-
 }

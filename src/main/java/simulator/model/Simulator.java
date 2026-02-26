@@ -92,4 +92,8 @@ public class Simulator implements JSONable {
         obj.put("state", regionManager.asJSON());
         return obj;
     }
+
+    public RegionManager getRegionManager() {
+        return this.regionManager;
+    }
 }

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class Region implements Entity, FoodSupplier, RegionInfo{
     protected List<Animal> list;
@@ -26,17 +27,23 @@ public class Region implements Entity, FoodSupplier, RegionInfo{
     }
 
     public void update(double dt) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
     public double getfood(AnimalInfo a, double dt) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getfood'");
+        if(a.getDiet() == Diet.CARNIVORE) return 0.0;
+        long n =list.stream().filter(anim -> anim.getDiet() == Diet.HERBIVORE).count();
+        return 60.0 * Math.exp(-Math.max(0, n -5.0)*2.0) * dt;
     }
 
-    public Collection<?> asJSON() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'asJSON'");
+    public JSONObject asJSON(){
+        JSONObject obj =  new JSONObject();
+        JSONArray animalsArray = new JSONArray();
+
+        for(Animal a: list){
+            animalsArray.put(a.asJSON());
+        }
+
+        obj.put("animals", animalsArray);
+        return obj;
     }
 }

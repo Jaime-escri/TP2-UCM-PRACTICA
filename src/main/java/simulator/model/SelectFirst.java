@@ -4,10 +4,9 @@ import java.util.List;
 
 public class SelectFirst implements SelectionStrategy{
     public Animal select(Animal a, List<Animal> as){
-        if(as!=null){
-            return as.get(0);
-        }
-       return null; 
+        if(as ==  null|| as.isEmpty()) return null;
+
+        return as.get(0);
     }
 
 }

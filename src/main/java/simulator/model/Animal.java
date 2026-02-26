@@ -201,4 +201,22 @@ public abstract class Animal implements Entity, AnimalInfo{
             this.setEnergy(askFood); //Mirar que la comida esté entre 0.0 y 100
         }
     }
+
+    @Override
+    public JSONObject asJSON() {
+        JSONObject jo = new JSONObject();
+
+        // Usamos la posición que ya sabemos que existe
+        if (pos != null) {
+            jo.put("pos", pos.asJSONArray());
+        }
+
+        // En lugar de genotype, vamos a usar el estado y la dieta
+        // (Asegúrate de que estas variables se llamen así en tu clase,
+        // suelen ser 'state' y 'diet')
+        jo.put("state", state);
+        jo.put("diet", diet);
+
+        return jo;
+    }
 }

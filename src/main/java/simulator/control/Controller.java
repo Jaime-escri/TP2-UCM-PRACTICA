@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import simulator.model.Simulator;
+import simulator.view.SimpleObjectViewer;
 
 public class Controller {
     private Simulator sim;
@@ -52,18 +53,42 @@ public class Controller {
         }
     }
 
-    public void run(double t, double dt, boolean sv, OutputStream out){
+    public void run(double t, double dt, boolean sv, OutputStream out) {
         PrintStream p = new PrintStream(out);
-        if(sv){
-            p.println(sim.asJSON().toString());
+        JSONObject result = new JSONObject();
+
+        // INICIALIZAR VISUALIZADOR
+        SimpleObjectViewer view = null;
+        if (sv) {
+            view = new SimpleObjectViewer(sim, dt);
+            view.showViewer();
         }
 
-        while(sim.getTime() <= t){
+        result.put("in", sim.asJSON());
+
+        while (sim.getTime() < t) {
             sim.advance(dt);
+
+            // ACTUALIZAR VISUALIZADOR
+            if (sv && view != null) {
+                view.update();
+            }
         }
 
-        if(sv){
-            p.println(sim.asJSON().toString());
-        }
+        result.put("out", sim.asJSON());
+        p.println(result.toString());
+        p.flush();
     }
 }
+
+/* public void run(double t, double dt, boolean sv, OutputStream out){
+        PrintStream p = new PrintStream(out);
+        JSONObject result = new JSONObject();
+        result.put("in", sim.asJSON());
+        while(sim.getTime()<t){
+            sim.advance(dt);
+        }
+        result.put("out", sim.asJSON());
+        p.println(result.toString());
+        p.flush();
+    } */
