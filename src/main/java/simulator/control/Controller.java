@@ -30,8 +30,8 @@ public class Controller {
                 int c1 = cols.getInt(0);
                 int c2 = cols.getInt(1);
 
-                for(int r = r1; r <= r2; i++){
-                    for(int c = c1; c<=c2;i++){
+                for(int r = r1; r <= r2; r++){
+                    for(int c = c1; c<=c2;c++){
                         this.sim.setRegion(r, c, spec);
                     }
                 }
@@ -62,14 +62,14 @@ public class Controller {
 
         while(sim.getTime() <= t){
             sim.advance(dt);
-
-            if(sv){
-
-            }
         }
 
         if(sv){
             p.println(sim.asJSON().toString());
         }
     }
+
+
+    
+
 }

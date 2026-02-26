@@ -9,8 +9,22 @@ public class Wolf extends Animal {
     private Animal huntTarget;
     private SelectionStrategy huntingStrategy;
 
+    final static String WOLF_GENETIC_CODE = "Wolf";
+    final static double INIT_SIGHT_WOLF = 50;
+    final static double INIT_SPEED_WOLF = 60;
+    final static double BOOST_FACTOR_WOLF = 3.0;
+    final static double MAX_AGE_WOLF = 14.0;
+    final static double FOOD_THRSHOLD_WOLF = 50.0;
+    final static double FOOD_DROP_BOOST_FACTOR_WOLF = 1.2;
+    final static double FOOD_DROP_RATE_WOLF = 18.0;
+    final static double FOOD_DROP_DESIRE_WOLF = 10.0;
+    final static double FOOD_EAT_VALUE_WOLF = 50.0;
+    final static double DESIRE_THRESHOLD_WOLF = 65.0;
+    final static double DESIRE_INCREASE_RATE_WOLF = 30.0;
+    final static double PREGNANT_PROBABILITY_WOLF = 0.75;
+
     public Wolf(SelectionStrategy mateStrategy, SelectionStrategy huntingStrategy,  Vector2D pos){
-        super("Wolf", Diet.CARNIVORE, 50.0, 60.0, mateStrategy, pos);
+        super(WOLF_GENETIC_CODE, Diet.CARNIVORE, INIT_SIGHT_WOLF, INIT_SPEED_WOLF, mateStrategy, pos);
         this.huntingStrategy = huntingStrategy;
     }
 
@@ -43,7 +57,7 @@ public class Wolf extends Animal {
         this.adjustPosition();
 
         //Comprobar su energía y edad para matarlo o no
-        if(this.getEnergy() == 0.0 || this.getAge() > 14.0){
+        if(this.getEnergy() == 0.0 || this.getAge() > MAX_AGE_WOLF){
             this.setState(State.DEAD);
         }
 
@@ -76,14 +90,14 @@ public class Wolf extends Animal {
         }
         this.move(this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
         this.addAge(dt);
-        this.setEnergy(Utils.constrainValueInRange(18.0*dt, 0.0, 100.0));
-        this.setDesire(Utils.constrainValueInRange(30.0*dt, 0.0, 100.0));
+        this.setEnergy(Utils.constrainValueInRange(FOOD_DROP_RATE_WOLF*dt, 0.0, 100.0));
+        this.setDesire(Utils.constrainValueInRange(DESIRE_INCREASE_RATE_WOLF*dt, 0.0, 100.0));
     }
 
     public void updateNormal(double dt){
         moveNormal(dt);
         if(this.getEnergy() < 50.0) this.setState(State.HUNGER);
-        else if(this.getDesire() > 65.0) this.setState(State.MATE);
+        else if(this.getDesire() > DESIRE_THRESHOLD_WOLF) this.setState(State.MATE);
     }
 
     public void updateHunger(double dt){
@@ -91,6 +105,7 @@ public class Wolf extends Animal {
             List<Animal> presas = this.getRegionMngr().getAnimalsInRange(this, a -> a.getDiet() == Diet.HERBIVORE);
             this.huntTarget = this.huntingStrategy.select(this, presas);
         }
+        
 
         if(this.huntTarget == null){
             moveNormal(dt);
@@ -98,8 +113,8 @@ public class Wolf extends Animal {
             this.setDestination(huntTarget.getPosition());
             this.move(3.0*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
             this.addAge(dt);
-            this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (18.0*1.2*dt), 0.0, 100.0));
-            this.setDesire(Utils.constrainValueInRange(this.getDesire() - (30.0*dt), 0.0, 100.0));
+            this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (FOOD_DROP_RATE_WOLF*FOOD_DROP_BOOST_FACTOR_WOLF*dt), 0.0, 100.0));
+            this.setDesire(Utils.constrainValueInRange(this.getDesire() - (DESIRE_INCREASE_RATE_WOLF*dt), 0.0, 100.0));
             
             if(this.getPosition().distanceTo(this.huntTarget.getPosition()) < 8.0){
                 this.huntTarget.setState(State.DEAD);
@@ -109,7 +124,7 @@ public class Wolf extends Animal {
         }
 
         if(this.getEnergy() > 50.0){
-            if(this.getDesire() < 65.0) this.setState(State.NORMAL);
+            if(this.getDesire() < DESIRE_THRESHOLD_WOLF) this.setState(State.NORMAL);
             else this.setState(State.MATE);
         }
     }
@@ -135,14 +150,14 @@ public class Wolf extends Animal {
 
             this.move(3.0*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
             this.addAge(dt);
-            this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (18.0 * 1.2 * dt), 0.0, 100.0));
-            this.setDesire(Utils.constrainValueInRange(this.getDesire() + (30.0 * dt), 0.0, 100.0));
+            this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (FOOD_DROP_RATE_WOLF * FOOD_DROP_BOOST_FACTOR_WOLF * dt), 0.0, 100.0));
+            this.setDesire(Utils.constrainValueInRange(this.getDesire() + (DESIRE_INCREASE_RATE_WOLF * dt), 0.0, 100.0));
 
             if (this.getPosition().distanceTo(this.getMateTarget().getPosition()) < 8.0) {
                 this.setDesire(0.0);
                 this.getMateTarget().setDesire(0.0);
 
-                if (!this.isPregnant() && Utils.RAND.nextDouble() < 0.9) {
+                if (!this.isPregnant() && Utils.RAND.nextDouble() < PREGNANT_PROBABILITY_WOLF) {
                     this.setBaby(new Wolf(this, this.getMateTarget()));
                 }
                 this.setMateTarget(null);
@@ -151,7 +166,7 @@ public class Wolf extends Animal {
             if (this.getEnergy() < 50.0) {
                 this.setState(State.HUNGER);
             } 
-            else if (this.getDesire() < 65.0) {
+            else if (this.getDesire() < DESIRE_THRESHOLD_WOLF) {
                 this.setState(State.NORMAL);
             }
         }

@@ -21,6 +21,14 @@ public abstract class Animal implements Entity, AnimalInfo{
     private AnimalMapView regionMngr;
     private SelectionStrategy mateStrategy;
 
+    final static double INIT_ENERGY = 100.0;
+    final static double MUTATION_TOLERANCE = 0.2;
+    final static double NEARBY_FACTOR = 60.0;
+    final static double COLLISION_RANGE = 8;
+    final static double HUNGER_DECAY_EXP_FACTOR = 0.007;
+    final static double MAX_ENERGY = 100.0;
+    final static double MAX_DESIRE = 100.0;
+
     protected Animal(String geneticCode, Diet diet, double sightRange, double initSpeed, SelectionStrategy mateStrategy, Vector2D pos){
         this.geneticCode = geneticCode;
         this.diet = diet;
@@ -186,13 +194,15 @@ public abstract class Animal implements Entity, AnimalInfo{
         double width = this.getRegionMngr().getWidth();
         double height = this.getRegionMngr().getHeight();
 
-        if(x >= width) x -= width;
-        else if(x < 0.0) x += width;
-        else if(y >= height) y -= height;
-        else if(y < 0.0) y += height;
+        while (x >= width) x = (x - width);
+        while (x < 0) x = (x + width);
+        while (y >= height) y = (y - height);
+        while (y < 0) y = (y + height);
 
         setPosition(x, y);
     }
+
+    
 
     //Ambos, si no están DEAD, piden comida:
     public void askFood(double dt){

@@ -153,11 +153,6 @@ public class Vector2D {
     return "[" + x + "," + y + "]";
   }
 
-  public static Vector2D getRandomVector(int i, int j) {
-      Random random = new Random();
-      i = random.nextInt(100);
-      j = random.nextInt(100);
-      return new Vector2D(i,j);
-  }
 
+  
 }
