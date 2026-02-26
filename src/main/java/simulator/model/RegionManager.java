@@ -22,7 +22,7 @@ public class RegionManager implements AnimalMapView{
     //Matriz
     private Region[][] regions;
 
-    private Map<AnimalInfo, Region> animalRegion;
+    private Map<Animal, Region> animalRegion;
 
     public RegionManager(int cols, int rows, double width, double height){
         this.width = width;
