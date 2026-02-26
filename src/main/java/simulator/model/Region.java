@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Region implements Entity, FoodSupplier, RegionInfo{
@@ -35,8 +36,16 @@ public class Region implements Entity, FoodSupplier, RegionInfo{
         throw new UnsupportedOperationException("Unimplemented method 'getfood'");
     }
 
-    public Collection<?> asJSON() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'asJSON'");
+    public JSONObject asJSON() {
+        JSONObject jo = new JSONObject();
+        JSONArray ja = new JSONArray();
+        
+        // Recorremos la lista de animales y añadimos su representación JSON
+        for (Animal a : list) {
+            ja.put(a.asJSON());
+        }
+        
+        jo.put("animals", ja);
+        return jo;
     }
 }
