@@ -43,15 +43,15 @@ public class Controller {
             }
         }
 
-        if(data.has("animals")){
+        if (data.has("animals")) {
             JSONArray animalArray = data.getJSONArray("animals");
-            for(int i = 0; i < animalArray.length(); i++){
+            for (int i = 0; i < animalArray.length(); i++) {
                 JSONObject animal = animalArray.getJSONObject(i);
-                JSONArray amount = animal.getJSONArray("amount");
-                int n = amount.getInt(0);
+                int n = animal.getInt("amount"); 
+                
                 JSONObject spec = animal.getJSONObject("spec");
 
-                for(int j = 0; j < n; j++){
+                for (int j = 0; j < n; j++) {
                     this.sim.addAnimal(spec);
                 }
             }

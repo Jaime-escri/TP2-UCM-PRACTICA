@@ -7,7 +7,7 @@ public class DefaultRegion extends Region {
     final static double FOOD_SHORTAGE_TH_HERBS = 5.0;
     final static double FOOD_SHORTAGE_EXP_HERBS = 2.0;
 
-    public double getFood(AnimalInfo a, double dt){
+    public double getfood(AnimalInfo a, double dt){
         if(a.getDiet() == Diet.CARNIVORE){
             return 0.0;
         }else{
@@ -22,6 +22,9 @@ public class DefaultRegion extends Region {
         }
     }
 
-    
-    public void update(){}
+
+    public void update(double dt){
+
+    }
+
 }

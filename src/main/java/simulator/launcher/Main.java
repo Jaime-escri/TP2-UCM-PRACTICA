@@ -46,9 +46,9 @@ public class Main {
   private static Controller controller;
 
   private final static Double DEFAULT_DELTA_TIME = 0.03; 
-  private final static String outFile = null;
-  private final static boolean simpleViewer= false;
   private static Double deltaTime = 0.1;
+  private static String outFile = null;
+  private static boolean simpleViewer= false;
 
   private enum ExecMode {
     BATCH("batch", "Batch mode"), GUI("gui", "Graphical User Interface mode");
@@ -137,10 +137,10 @@ public class Main {
     Options cmdLineOptions = new Options();
 
     //dt
-    cmdLineOptions.addOption(Option.builder("dt").longOpt("delta-time").desc("A real number representing the time step. Default value: 0.1.").build());
+    cmdLineOptions.addOption(Option.builder("dt").longOpt("delta-time").hasArg().desc("A real number representing the time step. Default value: 0.1.").build());
 
     //output file -o
-    cmdLineOptions.addOption(Option.builder("o").longOpt("output").desc("A file where output is written.").build());
+    cmdLineOptions.addOption(Option.builder("o").longOpt("output").hasArg().desc("A file where output is written.").build());
 
     //Simple viewer -sv
     cmdLineOptions.addOption(Option.builder("sv").longOpt("simple-viewer").desc("If present, show the graphical viewer.").build());
@@ -225,7 +225,11 @@ public class Main {
     controller.loadData(jo);
 
     OutputStream os = outFile == null ? System.out : new FileOutputStream(new File(outFile));
-    controller.run(time, DEFAULT_DELTA_TIME, simpleViewer, os);
+    controller.run(time, deltaTime, simpleViewer, os);
+
+    if (os != System.out) {
+        os.close();
+    }
 
   }
 
@@ -247,7 +251,7 @@ public class Main {
   }
 
   public static void main(String[] args) {
-    Utils.RAND.setSeed(2147483647l);
+    //Utils.RAND.setSeed(2147483647l);
     try {
       start(args);
     } catch (Exception e) {

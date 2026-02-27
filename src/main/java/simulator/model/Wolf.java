@@ -90,7 +90,7 @@ public class Wolf extends Animal {
         }
         this.move(this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
         this.addAge(dt);
-        this.setEnergy(Utils.constrainValueInRange(FOOD_DROP_RATE_WOLF*dt, 0.0, 100.0));
+        this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (FOOD_DROP_RATE_WOLF*dt), 0.0, 100.0));
         this.setDesire(Utils.constrainValueInRange(DESIRE_INCREASE_RATE_WOLF*dt, 0.0, 100.0));
     }
 

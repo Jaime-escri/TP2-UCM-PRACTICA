@@ -7,7 +7,7 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class Region implements Entity, FoodSupplier, RegionInfo{
+public abstract class Region implements Entity, FoodSupplier, RegionInfo{
     protected List<Animal> list;
 
     public Region(){
@@ -26,15 +26,9 @@ public class Region implements Entity, FoodSupplier, RegionInfo{
         return list;
     }
 
-    public void update(double dt) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
-    }
+    public abstract void update(double dt);
 
-    public double getfood(AnimalInfo a, double dt) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getfood'");
-    }
+    public abstract double getfood(AnimalInfo a, double dt);
 
     public JSONObject asJSON() {
         JSONObject jo = new JSONObject();

@@ -68,6 +68,8 @@ public class RegionManager implements AnimalMapView{
     }
 
     public void registerAnimal(Animal a) {
+        //Llamar al método init del animal pasándole una referencia a este gestor (this) esto es vital para que el animal pueda consultar el mapa después
+        a.init(this);
         //Obtengo al region
         Region r = getRegionInstance(a);
 
@@ -75,10 +77,7 @@ public class RegionManager implements AnimalMapView{
         r.addAnimal(a);
 
         //Aviso que el animal esta en la region
-        animalRegion.put(a, r);
-
-        // 4. Llamar al método init del animal pasándole una referencia a este gestor (this) esto es vital para que el animal pueda consultar el mapa después
-        a.init(this);
+        animalRegion.put(a, r); 
     }
 
     public void unregisterAnimal(Animal a) {

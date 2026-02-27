@@ -1,6 +1,8 @@
 package simulator.model;
 
 
+import org.json.JSONObject;
+
 import simulator.misc.Utils;
 import simulator.misc.Vector2D;
 
@@ -66,6 +68,8 @@ public abstract class Animal implements Entity, AnimalInfo{
             double x = Utils.RAND.nextDouble() * (regionMngr.getWidth() - 1);
             double y = Utils.RAND.nextDouble() * (regionMngr.getHeight() - 1);
             this.pos = new Vector2D(x,y);
+        }else{
+            this.adjustPosition();
         }
         double destX = Utils.RAND.nextDouble() * (regionMngr.getWidth() - 1);
         double destY = Utils.RAND.nextDouble() * (regionMngr.getHeight() - 1);
@@ -207,7 +211,17 @@ public abstract class Animal implements Entity, AnimalInfo{
     public void askFood(double dt){
         if(this.getState() != State.DEAD){
             double askFood = this.getRegionMngr().getfood(this, dt);
-            this.setEnergy(askFood); //Mirar que la comida esté entre 0.0 y 100
+            this.setEnergy(Utils.constrainValueInRange(askFood + this.energy, 0.0, 100.0)); //Mirar que la comida esté entre 0.0 y 100
         }
+    }
+
+    @Override
+    public JSONObject asJSON() {
+        JSONObject obj = new JSONObject();
+        obj.put("pos", pos.asJSONArray());
+        obj.put("gcode", geneticCode);
+        obj.put("diet", diet.toString());
+        obj.put("state", state.toString());
+        return obj;
     }
 }

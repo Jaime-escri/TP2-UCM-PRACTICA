@@ -18,9 +18,9 @@ public class DynamicSupplyRegion extends Region {
         this.factor = factor;
     }
 
-    
 
-    public double getFood(AnimalInfo a, double dt){
+
+    public double getfood(AnimalInfo a, double dt){
         if(a.getDiet() == Diet.CARNIVORE){
             return 0.0;
         }else{
