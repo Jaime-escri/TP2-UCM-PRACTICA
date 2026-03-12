@@ -1,14 +1,15 @@
 package simulator.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import simulator.misc.Vector2D;
+import simulator.model.MapInfo.RegionData;
 
 public class RegionManager implements AnimalMapView{
     //Dimensiones del mapa
@@ -163,6 +164,17 @@ public class RegionManager implements AnimalMapView{
         out.put("regions", regionsArray);
 
         return out;
+    }
+
+    @Override
+    public Iterator<RegionData> iterator() {
+        List<RegionData> list = new ArrayList<>();
+        for(int i = 0; i < this.rows; i++){
+            for(int j = 0; j < this.cols; j++){
+                list.add(new RegionData(i, j, regions[i][j]));
+            }
+        }
+        return list.iterator();
     }
 
 }

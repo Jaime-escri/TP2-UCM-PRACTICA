@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import simulator.model.AnimalInfo;
+import simulator.model.EcoSysObserver;
 import simulator.model.MapInfo;
 import simulator.model.Simulator;
 import simulator.view.SimpleObjectViewer;
@@ -23,24 +24,7 @@ public class Controller {
 
     public void loadData(JSONObject data){
         if(data.has("regions")){
-            JSONArray regionArray = data.getJSONArray("regions");
-            for(int i= 0; i < regionArray.length(); i++){
-                JSONObject region = regionArray.getJSONObject(i);
-                JSONArray rows = region.getJSONArray("row");
-                JSONArray cols = region.getJSONArray("col");
-                JSONObject spec = region.getJSONObject("spec");
-
-                int r1 = rows.getInt(0);
-                int r2 = rows.getInt(1);
-                int c1 = cols.getInt(0);
-                int c2 = cols.getInt(1);
-
-                for(int r = r1; r <= r2; r++){
-                    for(int c = c1; c<=c2;c++){
-                        this.sim.setRegion(r, c, spec);
-                    }
-                }
-            }
+            setRegions(data);
         }
 
         if (data.has("animals")) {
@@ -59,13 +43,13 @@ public class Controller {
     }
 
     private List<SimpleObjectViewer.ObjInfo> toAnimalsInfo(List<? extends AnimalInfo> animals) {
-    List<SimpleObjectViewer.ObjInfo> ol = new ArrayList<>(animals.size());
-    for (AnimalInfo a : animals) {
-        // Se extrae el código genético (etiqueta), la posición X e Y, y un tamaño (ej. 8)
-        ol.add(new SimpleObjectViewer.ObjInfo(a.getGeneticCode(), (int) a.getPosition().getX(), (int) a.getPosition().getY(), 8));
+        List<SimpleObjectViewer.ObjInfo> ol = new ArrayList<>(animals.size());
+        for (AnimalInfo a : animals) {
+            // Se extrae el código genético (etiqueta), la posición X e Y, y un tamaño (ej. 8)
+            ol.add(new SimpleObjectViewer.ObjInfo(a.getGeneticCode(), (int) a.getPosition().getX(), (int) a.getPosition().getY(), 8));
+        }
+        return ol;
     }
-    return ol;
-}
 
 
    public void run(double t, double dt, boolean sv, OutputStream out) {
@@ -93,5 +77,46 @@ public class Controller {
         p.println(result.toString(2)); // El '2' es para que el JSON sea legible
 
         if (sv) view.close();
+    }
+
+    // llama a `reset` del simulador.
+    public void reset(int cols, int rows, int width, int height){
+        sim.reset(cols, rows, width, height);
+    }
+     //suponiendo que `rs` es una estructura `JSON` que incluye la clave “regions” (como en la primera práctica), 
+     // modifica las regiones correspondientes usando `setRegion` del simulador. 
+     // Hay que hacer refactorización del código del `loadData` 
+     // para que no haya duplicación de código (porque `loadData` ya hacía algo parecido).
+    public void setRegions(JSONObject rs){
+        JSONArray regionArray = rs.getJSONArray("regions");
+        for (int i = 0; i < regionArray.length(); i++) {
+            JSONObject region = regionArray.getJSONObject(i);
+            JSONArray rows = region.getJSONArray("row");
+            JSONArray cols = region.getJSONArray("col");
+            JSONObject spec = region.getJSONObject("spec");
+
+            int r1 = rows.getInt(0);
+            int r2 = rows.getInt(1);
+            int c1 = cols.getInt(0);
+            int c2 = cols.getInt(1);
+
+            for (int r = r1; r <= r2; r++) {
+                for (int c = c1; c <= c2; c++) {
+                    this.sim.setRegion(r, c, spec);
+                }
+            }
+        }
+    }
+    //llama a `advance` del simulador.
+    public void advance(double dt){
+        sim.advance(dt);
+    }
+    //llama a `addObserver` del simulador.
+    public void addObserver(EcoSysObserver o){
+        sim.addObserver(o);
+    }
+    // llama a `removeObserver` del simulador.
+    public void removeObserver(EcoSysObserver o){
+        sim.removeObserver(o);
     }
 }

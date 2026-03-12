@@ -38,15 +38,15 @@ import simulator.model.Simulator;
 
 public class Main {
 
-  private static Factory<SelectionStrategy> selectionStrategyFactory;
-  private static Factory<Region> selectionRegionFactory;
-  private static Factory<Animal> selecionAnimalFactory;
+  public static Factory<SelectionStrategy> selectionStrategyFactory;
+  public static Factory<Region> selectionRegionFactory;
+  public static Factory<Animal> selecionAnimalFactory;
 
   private static Simulator sim;
   private static Controller controller;
 
   private final static Double DEFAULT_DELTA_TIME = 0.03; 
-  private static Double deltaTime = 0.1;
+  public static Double deltaTime = 0.1;
   private static String outFile = null;
   private static boolean simpleViewer= false;
 
