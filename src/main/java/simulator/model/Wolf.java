@@ -111,7 +111,7 @@ public class Wolf extends Animal {
             moveNormal(dt);
         }else{
             this.setDestination(huntTarget.getPosition());
-            this.move(3.0*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
+            this.move(BOOST_FACTOR_WOLF*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
             this.addAge(dt);
             this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (FOOD_DROP_RATE_WOLF*FOOD_DROP_BOOST_FACTOR_WOLF*dt), 0.0, 100.0));
             this.setDesire(Utils.constrainValueInRange(this.getDesire() - (DESIRE_INCREASE_RATE_WOLF*dt), 0.0, 100.0));
@@ -148,7 +148,7 @@ public class Wolf extends Animal {
         if(this.getMateTarget() != null){
             this.setDestination(this.getMateTarget().getPosition());
 
-            this.move(3.0*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
+            this.move(BOOST_FACTOR_WOLF*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
             this.addAge(dt);
             this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (FOOD_DROP_RATE_WOLF * FOOD_DROP_BOOST_FACTOR_WOLF * dt), 0.0, 100.0));
             this.setDesire(Utils.constrainValueInRange(this.getDesire() + (DESIRE_INCREASE_RATE_WOLF * dt), 0.0, 100.0));

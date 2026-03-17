@@ -51,7 +51,7 @@ public class Sheep extends Animal {
         //Si la posición está fuera del mapa, reajustarlo y normal
         this.adjustPosition();
         //Energy = 0.0 o Age = 8.0 -> DEAD
-        if(this.getAge() > 8.0 || this.getEnergy() == 0.0){
+        if(this.getAge() > MAX_AGE_SHEEP || this.getEnergy() == 0.0){
             this.setState(State.DEAD);
             return; //Para que el animal muerto no pida comida
         }
@@ -87,15 +87,15 @@ public class Sheep extends Animal {
 
     //Punto 1 del estado normal
     public void moveNormal(double dt){
-        if(this.getPosition().distanceTo(this.getDestination()) < 8.0){
+        if(this.getPosition().distanceTo(this.getDestination()) < MAX_AGE_SHEEP){
             double newX = Utils.RAND.nextDouble() * this.getRegionMngr().getWidth();
             double newY = Utils.RAND.nextDouble() * this.getRegionMngr().getHeight();
             this.setDestination(new Vector2D(newX, newY));
         }
         this.move(this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
         this.addAge(dt);
-        this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (20.0 * dt), 0.0, 100.0));
-        this.setDesire(Utils.constrainValueInRange(this.getDesire() + (40.0 * dt), 0.0, 100.0));
+        this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (FOOD_DROP_RATE_SHEEP * dt), 0.0, 100.0));
+        this.setDesire(Utils.constrainValueInRange(this.getDesire() + (DESIRE_INCREASE_RATE_SHEEP * dt), 0.0, 100.0));
     }
 
      public void updateNormal(double dt){
@@ -116,10 +116,10 @@ public class Sheep extends Animal {
         if(dangerSource == null) moveNormal(dt);
         else{
             this.setDestination(this.getPosition().plus(this.getPosition().minus(dangerSource.getPosition()).direction()));
-            this.move(2.0*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
+            this.move(BOOST_FACTOR_SHEEP*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
             this.addAge(dt);
-            this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (20.0 * 1.2 * dt), 0.0, 100.0));
-            this.setDesire(Utils.constrainValueInRange(this.getDesire() + (40.0 * dt), 0.0, 100.0));
+            this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (FOOD_DROP_RATE_SHEEP * 1.2 * dt), 0.0, 100.0));
+            this.setDesire(Utils.constrainValueInRange(this.getDesire() + (DESIRE_INCREASE_RATE_SHEEP * dt), 0.0, 100.0));
         }
 
         if(this.dangerSource == null || this.getPosition().distanceTo(this.dangerSource.getPosition()) > this.getSightRange() ){
@@ -152,10 +152,10 @@ public class Sheep extends Animal {
 
         if(this.getMateTarget() != null){
             this.setDestination(this.getMateTarget().getPosition());
-            this.move(2.0*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
+            this.move(BOOST_FACTOR_SHEEP*this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
             this.addAge(dt);
-            this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (20.0 * 1.2 * dt), 0.0, 100.0));
-            this.setDesire(Utils.constrainValueInRange(this.getDesire() + (40.0 * dt), 0.0, 100.0));
+            this.setEnergy(Utils.constrainValueInRange(this.getEnergy() - (FOOD_DROP_RATE_SHEEP * 1.2 * dt), 0.0, 100.0));
+            this.setDesire(Utils.constrainValueInRange(this.getDesire() + (DESIRE_INCREASE_RATE_SHEEP * dt), 0.0, 100.0));
 
             if(this.getPosition().distanceTo(this.getMateTarget().getPosition()) < 8.0){
                 this.setDesire(0.0);
@@ -182,5 +182,5 @@ public class Sheep extends Animal {
         this.dangerSource = this.dangerStrategy.select(this, dangers);
     }
 
-    
+
 }
