@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import simulator.model.AnimalInfo;
+import simulator.model.EcoSysObserver;
 import simulator.model.MapInfo;
 import simulator.model.Simulator;
 import simulator.view.SimpleObjectViewer;
@@ -23,24 +24,7 @@ public class Controller {
 
     public void loadData(JSONObject data){
         if(data.has("regions")){
-            JSONArray regionArray = data.getJSONArray("regions");
-            for(int i= 0; i < regionArray.length(); i++){
-                JSONObject region = regionArray.getJSONObject(i);
-                JSONArray rows = region.getJSONArray("row");
-                JSONArray cols = region.getJSONArray("col");
-                JSONObject spec = region.getJSONObject("spec");
-
-                int r1 = rows.getInt(0);
-                int r2 = rows.getInt(1);
-                int c1 = cols.getInt(0);
-                int c2 = cols.getInt(1);
-
-                for(int r = r1; r <= r2; r++){
-                    for(int c = c1; c<=c2;c++){
-                        this.sim.setRegion(r, c, spec);
-                    }
-                }
-            }
+            updateRegions(data.getJSONArray("regions"));
         }
 
         if (data.has("animals")) {
@@ -93,5 +77,45 @@ public class Controller {
         p.println(result.toString(2)); // El '2' es para que el JSON sea legible
 
         if (sv) view.close();
+    }
+
+    public void reset(int cols, int rows, int width, int height){
+        this.sim.reset(cols, rows, width, height);
+    }   
+
+    private void updateRegions(JSONArray regionArray){
+        for(int i= 0; i < regionArray.length(); i++){
+            JSONObject region = regionArray.getJSONObject(i);
+            JSONArray rows = region.getJSONArray("row");
+            JSONArray cols = region.getJSONArray("col");
+            JSONObject spec = region.getJSONObject("spec");
+
+            int r1 = rows.getInt(0);
+            int r2 = rows.getInt(1);
+            int c1 = cols.getInt(0);
+            int c2 = cols.getInt(1);
+
+            for(int r = r1; r <= r2; r++){
+                for(int c = c1; c<=c2;c++){
+                    this.sim.setRegion(r, c, spec);
+                }
+            }
+        }
+    }
+
+    public void setRegions(JSONObject rs){
+        updateRegions(rs.getJSONArray("regions"));
+    }
+
+    public void advance(double dt){
+        this.sim.advance(dt);
+    }
+
+    public void addObserver(EcoSysObserver o){
+        this.sim.addObserver(o);
+    }
+
+    public void removeObserver(EcoSysObserver o){
+        this.sim.removeObserver(o);
     }
 }

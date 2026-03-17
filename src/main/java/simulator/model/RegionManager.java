@@ -1,8 +1,10 @@
 package simulator.model;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 import org.json.JSONArray;
@@ -163,6 +165,33 @@ public class RegionManager implements AnimalMapView{
         out.put("regions", regionsArray);
 
         return out;
+    }
+
+
+    public Iterator<MapInfo.RegionData> iterator(){
+        return new Iterator<MapInfo.RegionData>(){
+            private int currentRow = 0;
+            private int currentCol = 0;
+
+            public boolean hasNext(){
+                return currentRow < rows;
+            }
+
+            public MapInfo.RegionData next(){
+                if(!hasNext()) throw new NoSuchElementException();
+
+                RegionInfo r = regions[currentRow][currentCol];
+                MapInfo.RegionData data = new MapInfo.RegionData(currentRow, currentCol, r);
+
+                currentCol++;
+                if(currentCol == cols){
+                    currentCol = 0;
+                    currentRow++;
+                }
+
+                return data;
+            }
+        };
     }
 
 }

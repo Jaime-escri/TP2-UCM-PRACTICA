@@ -2,6 +2,7 @@ package simulator.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -41,5 +42,9 @@ public abstract class Region implements Entity, FoodSupplier, RegionInfo{
         
         jo.put("animals", ja);
         return jo;
+    }
+
+    public List<AnimalInfo> getAnimalsInfo(){
+        return new ArrayList<>(list);
     }
 }
