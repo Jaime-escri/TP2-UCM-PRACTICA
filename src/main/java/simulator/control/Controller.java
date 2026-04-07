@@ -118,4 +118,9 @@ public class Controller {
     public void removeObserver(EcoSysObserver o){
         this.sim.removeObserver(o);
     }
+    
+    public MapInfo getMap(){
+        MapInfo m = this.sim.getMapInfo();
+        return m;
+    }
 }

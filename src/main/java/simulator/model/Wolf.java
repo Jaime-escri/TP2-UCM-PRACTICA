@@ -30,7 +30,7 @@ public class Wolf extends Animal {
 
     protected Wolf(Wolf p1, Animal p2){
         super(p1,p2);
-        this.huntingStrategy = p1.getMateStrategy();
+        this.huntingStrategy = p1.huntingStrategy;
         this.huntTarget = null;
     }
 

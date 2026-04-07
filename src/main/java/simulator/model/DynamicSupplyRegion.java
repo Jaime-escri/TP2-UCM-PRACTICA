@@ -1,6 +1,9 @@
 package simulator.model;
 
 import java.util.List;
+
+import org.json.JSONObject;
+
 import simulator.misc.Utils;
 
 public class DynamicSupplyRegion extends Region {
@@ -49,4 +52,10 @@ public class DynamicSupplyRegion extends Region {
         return "Dynamic food supply";
     }
 
+    @Override
+    public JSONObject asJSON(){
+        JSONObject jo = super.asJSON();
+        jo.put("food", food);
+        return jo;
+    }
 }
