@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -33,6 +35,7 @@ import simulator.model.Animal;
 import simulator.model.Region;
 import simulator.model.SelectionStrategy;
 import simulator.model.Simulator;
+import simulator.view.MainWindow;
 
 
 
@@ -234,7 +237,25 @@ public class Main {
   }
 
   private static void start_GUI_mode() throws Exception {
-    throw new UnsupportedOperationException("GUI mode is not ready yet ...");
+    if(inFile != null){
+      InputStream is = new FileInputStream(new File(inFile));
+      JSONObject jo = loadJSONFile(is);
+      is.close();
+
+      int cols = jo.getInt("cols");
+      int rows = jo.getInt("rows");
+      int width = jo.getInt("width");
+      int height = jo.getInt("height");
+      sim = new Simulator(cols, rows, width, height, selecionAnimalFactory, selectionRegionFactory);
+      controller = new Controller(sim);
+      controller.loadData(jo);
+      
+
+    }else{
+      sim = new Simulator(800, 600, 15, 20, selecionAnimalFactory, selectionRegionFactory);
+      controller = new Controller(sim);
+    }
+    SwingUtilities.invokeAndWait(() -> new MainWindow(controller));
   }
 
   private static void start(String[] args) throws Exception {

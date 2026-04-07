@@ -14,5 +14,9 @@ public class DefaultRegionBuilder extends Builder<Region>{
         return new DefaultRegion();
     }
 
+    public void fillInData(JSONObject o){
+        
+    }
+
     
 }

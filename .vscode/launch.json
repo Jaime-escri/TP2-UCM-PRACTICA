@@ -1,0 +1,47 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Main GUI",
+            "request": "launch",
+            "mainClass": "simulator.launcher.Main",
+            "projectName": "ecosystem-simulator",
+            "args": [
+                "-m", "gui",
+                "-i", "src/main/resources/examples/ex5.json"
+            ]
+        },
+
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "UsageExample",
+            "request": "launch",
+            "mainClass": "extra.json.UsageExample",
+            "projectName": "ecosystem-simulator"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "simulator.launcher.Main",
+            "projectName": "ecosystem-simulator",
+            "args": [
+                "-i", "src/main/resources/examples/ex5.json",
+                "-o", "out.json",
+                "-t", "10.0",
+                "-dt", "0.03",
+                "-sv"
+            ]
+        }
+    ]
+}
