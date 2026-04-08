@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import simulator.control.Controller;
 import simulator.model.AnimalInfo;
-import simulator.model.AnimalMapView;
+import simulator.model.Diet;
 import simulator.model.EcoSysObserver;
 import simulator.model.MapInfo;
 import simulator.model.RegionInfo;
@@ -19,14 +19,14 @@ import simulator.model.RegionInfo;
 class RegionsTableModel extends AbstractTableModel implements EcoSysObserver {
 
   MapInfo map;
-  String[] columnNames = {"Row", "Col", "Type", "Food", "Animals"};
+  String[] columnNames = {"Row", "Col", "Desc", "CARNIVORE", "HERBIVORE"};
 
   RegionsTableModel(Controller ctrl) {
     ctrl.addObserver(this);
   }
   
   public int getRowCount(){
-    return map.getCols() * map.getRows();
+    return map == null ? 0 : map.getCols() * map.getRows();
   }
   
   public int getColumnCount(){
@@ -49,22 +49,23 @@ class RegionsTableModel extends AbstractTableModel implements EcoSysObserver {
         reg = data.r();
       }
     }
-    
+
+    int countCarnivore = 0;
+    int countHervibore = 0;
+    for(AnimalInfo a : reg.getAnimalsInfo()){
+      if(a.getDiet() == Diet.CARNIVORE){
+        countCarnivore++;
+      }else if(a.getDiet() == Diet.HERBIVORE){
+        countHervibore++;
+      }
+    }
     switch (columnIndex) {
       case 0: return row;
       case 1: return col;
       case 2: return reg.toString();
-      case 3:{
-        JSONObject obj = reg.asJSON();
-        Object food = obj.optDouble("food", 0.0);
-        if(food.equals(0.0)){
-          food = "Infinito";
-        }
-        return food;
-      }
-      case 4: return reg.getAnimalsInfo();
+      case 3: return String.valueOf(countCarnivore);
+      case 4: return String.valueOf(countHervibore);
     }
-
     return null;
   }
 

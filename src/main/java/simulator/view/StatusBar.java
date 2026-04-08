@@ -1,5 +1,6 @@
 package simulator.view;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.util.List;
@@ -9,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 
 import simulator.control.Controller;
 import simulator.model.AnimalInfo;
@@ -31,10 +33,10 @@ class StatusBar extends JPanel implements EcoSysObserver {
 
     private void initGUI() {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
-        this.setBorder(BorderFactory.createBevelBorder(1));
+        this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        this.setBackground(Color.LIGHT_GRAY);
 
         timeLabel = new JLabel("Time: 0.00");
-        timeLabel.setPreferredSize(new Dimension(100,200));
         this.add(timeLabel);
 
         this.add(new JSeparator(SwingConstants.VERTICAL));

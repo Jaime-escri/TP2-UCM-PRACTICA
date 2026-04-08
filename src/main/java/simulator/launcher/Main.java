@@ -112,6 +112,7 @@ public class Main {
     try {
       CommandLine line = parser.parse(cmdLineOptions, args);
       parseHelpOption(line, cmdLineOptions);
+      parseModeOption(line);
       parseInFileOption(line);
       parseTimeOption(line);
       parseDeltaTimeOption(line);
@@ -154,6 +155,11 @@ public class Main {
     // input file
     cmdLineOptions.addOption(Option.builder("i").longOpt("input").hasArg().desc("A configuration file.").build());
 
+    // -m/--mode
+    cmdLineOptions.addOption(Option.builder("m").longOpt("mode").hasArg()
+        .desc("Execution mode. Possible values: 'batch' (batch mode) and 'gui' (GUI mode). Default value: gui.")
+        .build());
+      
     // steps
     cmdLineOptions.addOption(Option.builder("t").longOpt("time").hasArg()
       .desc("An real number representing the total simulation time in seconds. Default value: "
@@ -236,6 +242,18 @@ public class Main {
 
   }
 
+  private static void parseModeOption(CommandLine line) throws ParseException {
+    String m = line.getOptionValue("m", "gui"); // Si no pone nada, por defecto será gui
+    
+    if (m.equalsIgnoreCase("batch")) {
+        mode = ExecMode.BATCH;
+    } else if (m.equalsIgnoreCase("gui")) {
+        mode = ExecMode.GUI;
+    } else {
+        throw new ParseException("Invalid value for mode: " + m);
+    }
+}
+
   private static void start_GUI_mode() throws Exception {
     if(inFile != null){
       InputStream is = new FileInputStream(new File(inFile));
@@ -252,7 +270,7 @@ public class Main {
       
 
     }else{
-      sim = new Simulator(800, 600, 15, 20, selecionAnimalFactory, selectionRegionFactory);
+      sim = new Simulator(20, 15, 800, 600, selecionAnimalFactory, selectionRegionFactory);
       controller = new Controller(sim);
     }
     SwingUtilities.invokeAndWait(() -> new MainWindow(controller));
@@ -272,7 +290,7 @@ public class Main {
   }
 
   public static void main(String[] args) {
-    //Utils.RAND.setSeed(2147483647l);
+    Utils.RAND.setSeed(2147483647l);
     try {
       start(args);
     } catch (Exception e) {

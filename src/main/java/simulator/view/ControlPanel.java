@@ -60,13 +60,13 @@ class ControlPanel extends JPanel implements EcoSysObserver {
     //Abrir
     this.openButton = new JButton();
     this.openButton.setToolTipText("Load input file");
-    this.openButton.setIcon(new ImageIcon(ClassLoader.getSystemResource("/icon/open.png")));
+    this.openButton.setIcon(loadImage("icons/open.png"));
     this.openButton.addActionListener((e) -> loadFile());
     this.toolBar.add(openButton);
 
     this.viewerButton = new JButton();
     viewerButton.setToolTipText("Open Map Viewer");
-    viewerButton.setIcon(new ImageIcon(ClassLoader.getSystemResource("/icon/viewer.png")));
+    this.viewerButton.setIcon(loadImage("icons/viewer.png"));
     viewerButton.addActionListener((e) -> {
         new MapWindow(ViewUtils.getWindow(this), ctrl);
     });
@@ -74,7 +74,7 @@ class ControlPanel extends JPanel implements EcoSysObserver {
 
     this.regionsButton = new JButton();
     regionsButton.setToolTipText("Change Regions");
-    regionsButton.setIcon(new ImageIcon(ClassLoader.getSystemResource("/icon/regions.png")));
+    this.regionsButton.setIcon(loadImage("icons/regions.png"));
     regionsButton.addActionListener((e) -> {
         this.changeRegionsDialog.open(ViewUtils.getWindow(this));
     });
@@ -84,7 +84,7 @@ class ControlPanel extends JPanel implements EcoSysObserver {
 
     this.runButton = new JButton();
     runButton.setToolTipText("Run Simulator");
-    runButton.setIcon(new ImageIcon(ClassLoader.getSystemResource("/icon/run.png")));
+    this.runButton.setIcon(loadImage("icons/run.png"));
     runButton.addActionListener((e) -> {
         this.stopped = false;
         enabledButtons(false);
@@ -96,7 +96,7 @@ class ControlPanel extends JPanel implements EcoSysObserver {
 
     this.stopButton = new JButton();
     stopButton.setToolTipText("Stop Simulation");
-    stopButton.setIcon(new ImageIcon(ClassLoader.getSystemResource("/icon/stop.png")));
+    this.stopButton.setIcon(loadImage("icons/stop.png"));
     stopButton.addActionListener((e) -> this.stopped = true);
     this.toolBar.add(stopButton);
 
@@ -119,7 +119,7 @@ class ControlPanel extends JPanel implements EcoSysObserver {
 
     this.quitButton = new JButton();
     this.quitButton.setToolTipText("Quit");
-    this.quitButton.setIcon(new ImageIcon(ClassLoader.getSystemResource("/icon/exit.png")));
+    this.quitButton.setIcon(loadImage("icons/exit.png"));
     this.quitButton.addActionListener((e) -> ViewUtils.quit(this));
     this.toolBar.add(quitButton);
 
@@ -190,5 +190,14 @@ class ControlPanel extends JPanel implements EcoSysObserver {
     public void onRegionSet(int row, int col, MapInfo map, RegionInfo r){}
     public void onAdvance(double time, MapInfo map, List<AnimalInfo> animals, double dt){
         this.timeLabel.setText(String.valueOf(time));
+    }
+
+    private ImageIcon loadImage(String path) {
+        java.net.URL url = ClassLoader.getSystemResource(path);
+        if (url == null) {
+            System.err.println("¡ERROR! No se encuentra el archivo: " + path);
+            return null; // O devuelve un icono vacío por defecto
+        }
+        return new ImageIcon(url);
     }
 }

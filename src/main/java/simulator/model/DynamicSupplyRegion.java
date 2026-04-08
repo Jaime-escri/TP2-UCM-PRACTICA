@@ -49,7 +49,7 @@ public class DynamicSupplyRegion extends Region {
     }
 
     public String toString(){
-        return "Dynamic food supply";
+        return "Dynamic";
     }
 
     @Override

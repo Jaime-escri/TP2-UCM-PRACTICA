@@ -28,7 +28,7 @@ public class DefaultRegion extends Region {
     }
 
     public String toString(){
-        return "Infinite food supply";
+        return "default";
     }
 
 }

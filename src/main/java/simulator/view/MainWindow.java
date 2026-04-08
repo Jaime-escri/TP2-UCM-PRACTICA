@@ -29,11 +29,7 @@ public class MainWindow extends JFrame {
         // ControlPanel en la parte superior
         ControlPanel controlPanel = new ControlPanel(ctrl);
         mainPanel.add(controlPanel, BorderLayout.PAGE_START);
-
-        // StatusBar en la parte inferior (¡Añadido!)
-        StatusBar statusBar = new StatusBar(ctrl);
-        mainPanel.add(statusBar, BorderLayout.PAGE_END);
-
+        
         // Panel central para las tablas
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
@@ -51,6 +47,10 @@ public class MainWindow extends JFrame {
         regionsTable.setPreferredSize(new Dimension(500, 250));
         contentPanel.add(regionsTable);
 
+        //StatusBar en la parte inferior
+        StatusBar statusBar = new StatusBar(ctrl);
+        mainPanel.add(statusBar, BorderLayout.PAGE_END);
+
         // Gestión del cierre de ventana
         addWindowListener(new WindowAdapter() {
             @Override
@@ -61,7 +61,6 @@ public class MainWindow extends JFrame {
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         pack();
-        setLocationRelativeTo(null); 
         setVisible(true);
     }
 }
