@@ -1,5 +1,6 @@
 package simulator.view;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
@@ -59,12 +61,13 @@ class ChangeRegionsDialog extends JDialog implements EcoSysObserver {
         JPanel tablePanel = new JPanel();
         JPanel comboPanel = new JPanel();
         JPanel buttonPanel = new JPanel();
-       
+
         JLabel textLabel = new JLabel();
-        textLabel.setText("Select a region type, the rows/cols interval, and provide values for the parameters in the Value Column (default values are used for parameters with no value)");
+        textLabel.setText("<html>Select a region type, the rows/cols interval, and provide values for the parameters <br> in the Value Column (default values are used for parameters with no value)</html>");
         helpPanel.add(textLabel);
         mainPanel.add(helpPanel);
         mainPanel.add(Box.createVerticalStrut(10));
+        
         
         this.regionsInfo = Main.selectionRegionFactory.getInfo();
 

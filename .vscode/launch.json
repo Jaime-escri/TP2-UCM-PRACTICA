@@ -12,7 +12,7 @@
             "projectName": "ecosystem-simulator",
             "args": [
                 "-m", "gui",
-                "-i", "src/main/resources/examples/ex5.json"
+                "-i", "src/main/resources/examples/ex1.json"
             ]
         },
 

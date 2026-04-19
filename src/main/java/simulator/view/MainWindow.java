@@ -9,6 +9,8 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 
 import simulator.control.Controller;
 
@@ -29,12 +31,11 @@ public class MainWindow extends JFrame {
         // ControlPanel en la parte superior
         ControlPanel controlPanel = new ControlPanel(ctrl);
         mainPanel.add(controlPanel, BorderLayout.PAGE_START);
-        
+
         // Panel central para las tablas
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        mainPanel.add(contentPanel, BorderLayout.CENTER);
-
+        
         // Tabla de especies
         SpeciesTableModel speciesTableModel = new SpeciesTableModel(ctrl);
         InfoTable speciesTable = new InfoTable("Species", speciesTableModel);
@@ -46,6 +47,9 @@ public class MainWindow extends JFrame {
         InfoTable regionsTable = new InfoTable("Regions", regionsTableModel);
         regionsTable.setPreferredSize(new Dimension(500, 250));
         contentPanel.add(regionsTable);
+
+        JScrollPane scrollPane = new JScrollPane(contentPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         //StatusBar en la parte inferior
         StatusBar statusBar = new StatusBar(ctrl);
