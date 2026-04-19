@@ -1,5 +1,6 @@
 package simulator.view;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -11,7 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 
+import netscape.javascript.JSException;
 import simulator.control.Controller;
 import simulator.model.AnimalInfo;
 import simulator.model.EcoSysObserver;
@@ -22,8 +25,6 @@ class StatusBar extends JPanel implements EcoSysObserver {
 
     private JLabel timeLabel;
     private JLabel totalAnimalsLabel;
-    private JLabel sheepLabel;
-    private JLabel wolfLabel;
     private JLabel dimensionesLabel;
 
     StatusBar(Controller ctrl) {
@@ -32,62 +33,50 @@ class StatusBar extends JPanel implements EcoSysObserver {
     }
 
     private void initGUI() {
-        this.setLayout(new FlowLayout(FlowLayout.LEFT));
+        this.setLayout(new BorderLayout());
         this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         this.setBackground(Color.LIGHT_GRAY);
+        this.setPreferredSize(new Dimension(0, 30));
+
+
+        //Panel izquierdo (time, total, sheep)
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.setOpaque(false);
 
         timeLabel = new JLabel("Time: 0.00");
-        this.add(timeLabel);
+        leftPanel.add(timeLabel);
 
-        this.add(new JSeparator(SwingConstants.VERTICAL));
+        JSeparator sep1 = new JSeparator(SwingConstants.VERTICAL);
+        sep1.setPreferredSize(new Dimension(5,20));
+        leftPanel.add(sep1);
 
-        totalAnimalsLabel = new JLabel("Total: 0");
-        totalAnimalsLabel.setPreferredSize(new Dimension(80, 20));
-        this.add(totalAnimalsLabel);
+        totalAnimalsLabel = new JLabel("Total Animals: 0");
+        leftPanel.add(totalAnimalsLabel);
 
-        this.add(new JSeparator(SwingConstants.VERTICAL));
-
-        sheepLabel = new JLabel("Sheep: 0");
-        sheepLabel.setPreferredSize(new Dimension(80, 20));
-        this.add(sheepLabel);
-
-        wolfLabel = new JLabel("Wolves: 0");
-        wolfLabel.setPreferredSize(new Dimension(80, 20));
-        this.add(wolfLabel);
+        JSeparator sep2 = new JSeparator(SwingConstants.VERTICAL);
+        sep2.setPreferredSize(new Dimension(5,20));
+        leftPanel.add(sep2);
 
         dimensionesLabel = new JLabel("Dimensiones: ");
-        dimensionesLabel.setPreferredSize(new Dimension(80, 20));
-        this.add(dimensionesLabel);
+        leftPanel.add(dimensionesLabel);
         
-        JSeparator s = new JSeparator(JSeparator.VERTICAL);
-        s.setPreferredSize(new Dimension(10, 20));
-        this.add(s);
+        JSeparator sep5 = new JSeparator(SwingConstants.VERTICAL);
+        sep5.setPreferredSize(new Dimension(5,20));
+        leftPanel.add(sep5);
+        
+        this.add(leftPanel, BorderLayout.CENTER);
     }
 
     private void update(double time, List<AnimalInfo> animals, MapInfo map) {
         timeLabel.setText(String.format("Time: %.2f", time));
         
         int total = animals.size();
-        int sheepCount = 0;
-        int wolfCount = 0;
-
-
-        for (AnimalInfo a : animals) {
-            if (a.getGeneticCode().equalsIgnoreCase("Sheep")) {
-                sheepCount++;
-            } else if (a.getGeneticCode().equalsIgnoreCase("Wolf")) {
-                wolfCount++;
-            }
-        }
-
         int row = map.getRows();
         int col = map.getCols();
         int height = map.getHeight();
         int width = map.getWidth();
 
-        totalAnimalsLabel.setText("Total: " + total);
-        sheepLabel.setText("Sheep: " + sheepCount);
-        wolfLabel.setText("Wolves: " + wolfCount);
+        totalAnimalsLabel.setText("Total Animals: " + total);
         dimensionesLabel.setText(String.format("Dimensiones: %dx%d (%dx%d)", width, height, col, row));
     }
 

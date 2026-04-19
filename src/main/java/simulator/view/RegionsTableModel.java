@@ -38,17 +38,17 @@ class RegionsTableModel extends AbstractTableModel implements EcoSysObserver {
   }
 
   public Object getValueAt(int rowIndex, int columnIndex){
-    int row = rowIndex/map.getCols();
+    int row = rowIndex/map.getCols() + 1;
     int col = rowIndex % map.getCols();
     
     RegionInfo reg = null;
-    Iterator<MapInfo.RegionData> it = map.iterator();
-    while(reg == null && it.hasNext()){
-      MapInfo.RegionData data = it.next();
-      if(data.col() == col && data.row() == row){
+    for(MapInfo.RegionData data : map){
+      if(data.row() == row && data.col() == col){
         reg = data.r();
       }
     }
+
+    if(reg == null)return "N/A";
 
     int countCarnivore = 0;
     int countHervibore = 0;
