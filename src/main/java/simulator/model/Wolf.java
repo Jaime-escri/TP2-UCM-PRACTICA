@@ -22,15 +22,16 @@ public class Wolf extends Animal {
     final static double DESIRE_THRESHOLD_WOLF = 65.0;
     final static double DESIRE_INCREASE_RATE_WOLF = 30.0;
     final static double PREGNANT_PROBABILITY_WOLF = 0.75;
+    final static Diet WOLF_DIET = Diet.CARNIVORE;
 
     public Wolf(SelectionStrategy mateStrategy, SelectionStrategy huntingStrategy,  Vector2D pos){
-        super(WOLF_GENETIC_CODE, Diet.CARNIVORE, INIT_SIGHT_WOLF, INIT_SPEED_WOLF, mateStrategy, pos);
+        super(WOLF_GENETIC_CODE, WOLF_DIET, INIT_SIGHT_WOLF, INIT_SPEED_WOLF, mateStrategy, pos);
         this.huntingStrategy = huntingStrategy;
     }
 
     protected Wolf(Wolf p1, Animal p2){
         super(p1,p2);
-        this.huntingStrategy = p1.getMateStrategy();
+        this.huntingStrategy = p1.huntingStrategy;
         this.huntTarget = null;
     }
 
@@ -85,7 +86,7 @@ public class Wolf extends Animal {
     //Métodos del diagrama de estados:
 
     public void moveNormal(double dt){
-         if(this.getPosition().distanceTo(this.getDestination()) < 8.0){
+        if(this.getPosition().distanceTo(this.getDestination()) < 8.0){
             this.setDestination(Vector2D.get_random_vector(0, this.getRegionMngr().getWidth()));
         }
         this.move(this.getSpeed()*dt*Math.exp((this.getEnergy()-100.0)*0.007));
@@ -99,14 +100,12 @@ public class Wolf extends Animal {
         if(this.getEnergy() < 50.0) this.setState(State.HUNGER);
         else if(this.getDesire() > DESIRE_THRESHOLD_WOLF) this.setState(State.MATE);
     }
-
     public void updateHunger(double dt){
         if(this.huntTarget == null || this.huntTarget.getState() == State.DEAD || this.getPosition().distanceTo(this.huntTarget.getPosition()) > this.getSightRange()){
             List<Animal> presas = this.getRegionMngr().getAnimalsInRange(this, a -> a.getDiet() == Diet.HERBIVORE);
             this.huntTarget = this.huntingStrategy.select(this, presas);
         }
         
-
         if(this.huntTarget == null){
             moveNormal(dt);
         }else{
@@ -128,7 +127,6 @@ public class Wolf extends Animal {
             else this.setState(State.MATE);
         }
     }
-
     public void updateMate(double dt){
         if(this.getMateTarget() != null &&
             (this.getMateTarget().getState() == State.DEAD 

@@ -1,7 +1,6 @@
 package simulator.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -45,6 +44,6 @@ public abstract class Region implements Entity, FoodSupplier, RegionInfo{
     }
 
     public List<AnimalInfo> getAnimalsInfo(){
-        return Collections.unmodifiableList(list); //Esto es similar a new ArratList<>(list) lo que pasa es que devuelves de forma que no se peuda modifcar para mayor seguridad en el código
+        return Collections.unmodifiableList(list); //Esto es similar a new ArratList<>(list) lo que pasa es que devuelves de forma que no se peuda modificar para mayor seguridad en el código
     }
 }

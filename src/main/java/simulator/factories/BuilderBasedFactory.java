@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import simulator.factories.Builder;
 
 import org.json.JSONObject;
 
@@ -21,9 +20,9 @@ public class BuilderBasedFactory<T> implements Factory<T> {
 	public BuilderBasedFactory(List<Builder<T>> builders) {
 		this();
 
-       for(Builder<T> b : builders){
+        for(Builder<T> b : builders){
             addBuilder(b);
-       }
+        }
 	}
 
 	public void addBuilder(Builder<T> b) {

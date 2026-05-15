@@ -59,7 +59,7 @@ public class Simulator implements JSONable, Observable<EcoSysObserver>{
     }
 
     public double getTime(){
-        return this.time;
+        return time;
     }
 
     public void advance(double dt){

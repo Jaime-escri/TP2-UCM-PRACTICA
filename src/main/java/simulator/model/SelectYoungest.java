@@ -9,7 +9,7 @@ public class SelectYoungest implements SelectionStrategy{
         Animal youngest = as.get(0);
         for(int i = 1; i < as.size(); i++){
             Animal current = as.get(i);
-            if(youngest.getAge() < current.getAge()){
+            if(youngest.getAge() > current.getAge()){
                 youngest = current;
             }
         }

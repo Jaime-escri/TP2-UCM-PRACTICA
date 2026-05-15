@@ -117,80 +117,31 @@ public abstract class Animal implements Entity, AnimalInfo{
         return b;
     }
 
-
-    public void setDestination(Vector2D other){
-        this.dest = other;
-    }
-
-    public void addAge(double a){
-        this.age += a;
-    }
-
-    public void setEnergy(double e) {
-        this.energy = e;
-    }
-
-    public void setDesire(double d) {
-        this.desire = d;
-    }
-
     //Getters y setters
-    public State getState(){
-        return this.state;
-    }
-	public Vector2D getPosition(){
-        return this.pos;
-    }
-	public String getGeneticCode(){
-        return this.geneticCode;
-    }
-	public Diet getDiet(){
-        return this.diet;
-    }
-	public double getSpeed(){
-        return this.speed;
-    }
-	public double getSightRange(){
-        return this.sightRange;
-    }
-	public double getEnergy(){
-        return this.energy;
-    }
-	public double getAge(){
-        return this.age;
-    }
-	public Vector2D getDestination(){
-        return this.dest;
-    }
-	public boolean isPregnant(){
-        return this.baby != null;
-    }
-    public double getDesire(){
-        return this.desire;
-    }
-    public AnimalMapView getRegionMngr(){
-        return this.regionMngr;
-    }
+    public State getState(){ return this.state;}
+	public Vector2D getPosition(){return this.pos;}
+	public String getGeneticCode(){return this.geneticCode;}
+	public Diet getDiet(){return this.diet;}
+	public double getSpeed(){return this.speed;}
+	public double getSightRange(){return this.sightRange;}
+	public double getEnergy(){return this.energy;}
+	public double getAge(){return this.age;}
+	public Vector2D getDestination(){return this.dest;}
+	public boolean isPregnant(){return this.baby != null;}
+    public double getDesire(){return this.desire;}
+    public AnimalMapView getRegionMngr(){return this.regionMngr;}
+    protected Animal getMateTarget(){return this.mateTarget;}
+    protected SelectionStrategy getMateStrategy() {return mateStrategy;}
 
-    protected void setMateTarget(Animal mateTarget) { 
-        this.mateTarget = mateTarget; 
-    }
-    protected void setBaby(Animal baby) { 
-        this.baby = baby; 
-    }
-    protected SelectionStrategy getMateStrategy() { 
-        return mateStrategy; 
-    }
+    protected void setMateTarget(Animal mateTarget) {this.mateTarget = mateTarget;}
+    protected void setBaby(Animal baby) {this.baby = baby;}
+    protected void setPosition(double x, double y){this.pos = new Vector2D(x,y);}
+    public void setDestination(Vector2D other){this.dest = other;}
+    public void addAge(double a){this.age += a;}
+    public void setEnergy(double e) {this.energy = e;}
+    public void setDesire(double d) {this.desire = d;}
 
-    protected void setPosition(double x, double y){
-        this.pos = new Vector2D(x,y);
-    }
-
-    protected Animal getMateTarget(){
-        return this.mateTarget;
-    }
-
-    //Wolf y sheep comparten el adjustPosition:
+    
     public void adjustPosition(){
         double x = this.getPosition().getX();
         double y = this.getPosition().getY();
@@ -205,9 +156,6 @@ public abstract class Animal implements Entity, AnimalInfo{
         setPosition(x, y);
     }
 
-
-
-    //Ambos, si no están DEAD, piden comida:
     public void askFood(double dt){
         if(this.getState() != State.DEAD){
             double askFood = this.getRegionMngr().getfood(this, dt);

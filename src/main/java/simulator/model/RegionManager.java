@@ -9,10 +9,9 @@ import java.util.function.Predicate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import simulator.misc.Vector2D;
-import simulator.model.MapInfo.RegionData;
 
 public class RegionManager implements AnimalMapView{
-    //Dimensiones del mapa
+    //Dimensiones del mapa//
     private int width;
     private int height;
     private int cols;

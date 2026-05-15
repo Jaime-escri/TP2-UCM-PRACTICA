@@ -8,6 +8,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -26,6 +28,7 @@ import simulator.factories.DynamicSupplyRegionBuilder;
 import simulator.factories.Factory;
 import simulator.factories.SelectClosestBuilder;
 import simulator.factories.SelectFirstBuilder;
+import simulator.factories.SelectYoungestBuilder;
 import simulator.factories.SheepBuilder;
 import simulator.factories.WolfBuilder;
 import simulator.misc.Utils;
@@ -33,8 +36,7 @@ import simulator.model.Animal;
 import simulator.model.Region;
 import simulator.model.SelectionStrategy;
 import simulator.model.Simulator;
-
-
+import simulator.view.MainWindow;
 
 public class Main {
 
@@ -49,6 +51,10 @@ public class Main {
   public static Double deltaTime = 0.1;
   private static String outFile = null;
   private static boolean simpleViewer= false;
+  private final static Double DEFAULT_TIME = 10.0;
+  private static Double time = null;
+  private static String inFile = null;
+  private static ExecMode mode = ExecMode.BATCH;
 
   private enum ExecMode {
     BATCH("batch", "Batch mode"), GUI("gui", "Graphical User Interface mode");
@@ -70,6 +76,7 @@ public class Main {
     }
   }
 
+  //Parse
   private static void parseDeltaTimeOption(CommandLine line) throws ParseException {
     String dt = line.getOptionValue("dt", "0.1");
     try {
@@ -78,25 +85,22 @@ public class Main {
         throw new ParseException("Invalid value for delta-time: " + dt);
     }
   }
-
-    private static void parseOutFileOption(CommandLine line) {
-      outFile = line.getOptionValue("o");
+  private static void parseOutFileOption(CommandLine line) {
+    outFile = line.getOptionValue("o");
+  }
+  private static void parseSimpleViewerOption(CommandLine line) {
+    simpleViewer = line.hasOption("sv");
+  }
+  private static void parseModeOption(CommandLine line) throws ParseException {
+    String modeValue = line.getOptionValue("m", "gui");
+    for (ExecMode m : ExecMode.values()) {
+      if (modeValue.equals(m.getTag())) {
+        mode = m;
+        return;
+      }
     }
-
-    private static void parseSimpleViewerOption(CommandLine line) {
-      simpleViewer = line.hasOption("sv");
-    }
-
-  // default values for some parameters
-  //
-  private final static Double DEFAULT_TIME = 10.0; // in seconds
-
-  // some attributes to stores values corresponding to command-line parameters
-  //
-  private static Double time = null;
-  private static String inFile = null;
-  private static ExecMode mode = ExecMode.BATCH;
-
+    throw new ParseException("Invalid mode: " + modeValue);
+  }
   private static void parseArgs(String[] args) {
 
     // define the valid command line options
@@ -109,6 +113,7 @@ public class Main {
     try {
       CommandLine line = parser.parse(cmdLineOptions, args);
       parseHelpOption(line, cmdLineOptions);
+      parseModeOption(line);
       parseInFileOption(line);
       parseTimeOption(line);
       parseDeltaTimeOption(line);
@@ -132,34 +137,6 @@ public class Main {
     }
 
   }
-
-  private static Options buildOptions() {
-    Options cmdLineOptions = new Options();
-
-    //dt
-    cmdLineOptions.addOption(Option.builder("dt").longOpt("delta-time").hasArg().desc("A real number representing the time step. Default value: 0.1.").build());
-
-    //output file -o
-    cmdLineOptions.addOption(Option.builder("o").longOpt("output").hasArg().desc("A file where output is written.").build());
-
-    //Simple viewer -sv
-    cmdLineOptions.addOption(Option.builder("sv").longOpt("simple-viewer").desc("If present, show the graphical viewer.").build());
-
-    // help
-    cmdLineOptions.addOption(Option.builder("h").longOpt("help").desc("Print this message.").build());
-
-    // input file
-    cmdLineOptions.addOption(Option.builder("i").longOpt("input").hasArg().desc("A configuration file.").build());
-
-    // steps
-    cmdLineOptions.addOption(Option.builder("t").longOpt("time").hasArg()
-      .desc("An real number representing the total simulation time in seconds. Default value: "
-        + DEFAULT_TIME + ".")
-      .build());
-
-    return cmdLineOptions;
-  }
-
   private static void parseHelpOption(CommandLine line, Options cmdLineOptions) {
     if (line.hasOption("h")) {
       HelpFormatter formatter = new HelpFormatter();
@@ -167,14 +144,12 @@ public class Main {
       System.exit(0);
     }
   }
-
   private static void parseInFileOption(CommandLine line) throws ParseException {
     inFile = line.getOptionValue("i");
     if (mode == ExecMode.BATCH && inFile == null) {
       throw new ParseException("In batch mode an input configuration file is required");
     }
   }
-
   private static void parseTimeOption(CommandLine line) throws ParseException {
     String t = line.getOptionValue("t", DEFAULT_TIME.toString());
     try {
@@ -185,32 +160,67 @@ public class Main {
     }
   }
 
+  private static Options buildOptions() {
+    Options cmdLineOptions = new Options();
+
+    // dt
+    cmdLineOptions.addOption(Option.builder("dt").longOpt("delta-time").hasArg()
+        .desc("A real number representing the time step. Default value: 0.1.").build());
+
+    // output file -o
+    cmdLineOptions
+        .addOption(Option.builder("o").longOpt("output").hasArg().desc("A file where output is written.").build());
+
+    // Simple viewer -sv
+    cmdLineOptions.addOption(
+        Option.builder("sv").longOpt("simple-viewer").desc("If present, show the graphical viewer.").build());
+
+    // help
+    cmdLineOptions.addOption(Option.builder("h").longOpt("help").desc("Print this message.").build());
+
+    // input file
+    cmdLineOptions.addOption(Option.builder("i").longOpt("input").hasArg().desc("A configuration file.").build());
+
+    // -m/--mode
+    cmdLineOptions.addOption(Option.builder("m").longOpt("mode").hasArg()
+        .desc("Execution mode. Possible values: 'batch' (batch mode) and 'gui' (GUI mode). Default value: gui.")
+        .build());
+
+    // steps
+    cmdLineOptions.addOption(Option.builder("t").longOpt("time").hasArg()
+        .desc("An real number representing the total simulation time in seconds. Default value: "
+            + DEFAULT_TIME + ".")
+        .build());
+
+    return cmdLineOptions;
+  }
+
   private static void initFactories() {
-    // initialize the strategies factory
+    //strategies factory
     List<Builder<SelectionStrategy>> selectionStrategyBuilders = new ArrayList<>();
     selectionStrategyBuilders.add(new SelectFirstBuilder());
     selectionStrategyBuilders.add(new SelectClosestBuilder());
+    selectionStrategyBuilders.add(new SelectYoungestBuilder());
     selectionStrategyFactory = new BuilderBasedFactory<SelectionStrategy>(selectionStrategyBuilders);
 
-    //initialize the regions factory
+    //regions factory
     List<Builder<Region>> selectionRegionBuilders = new ArrayList<>();
     selectionRegionBuilders.add(new DefaultRegionBuilder());
     selectionRegionBuilders.add(new DynamicSupplyRegionBuilder());
     selectionRegionFactory= new BuilderBasedFactory<Region>(selectionRegionBuilders);
 
-    //initialize the animals factory
+    //animals factory
     List<Builder<Animal>> selectionAnimalBuilders = new ArrayList<>();
     selectionAnimalBuilders.add(new SheepBuilder(selectionStrategyFactory));
     selectionAnimalBuilders.add(new WolfBuilder(selectionStrategyFactory));
     selecionAnimalFactory = new BuilderBasedFactory<Animal>(selectionAnimalBuilders);
   }
 
-
   private static JSONObject loadJSONFile(InputStream in) {
     return new JSONObject(new JSONTokener(in));
   }
 
-
+//Start
   private static void start_batch_mode() throws Exception {
     InputStream is = new FileInputStream(new File(inFile));
     JSONObject jo = loadJSONFile(is);
@@ -228,15 +238,31 @@ public class Main {
     controller.run(time, deltaTime, simpleViewer, os);
 
     if (os != System.out) {
-        os.close();
+      os.close();
     }
 
   }
-
   private static void start_GUI_mode() throws Exception {
-    throw new UnsupportedOperationException("GUI mode is not ready yet ...");
+    int cols = 20;
+    int rows = 15;
+    int width = 800;
+    int height = 600;
+    sim = new Simulator(cols, rows, width, height, selecionAnimalFactory, selectionRegionFactory);
+    controller = new Controller(sim);
+    if(inFile != null){
+      InputStream is = new FileInputStream(new File(inFile));
+      JSONObject jo = loadJSONFile(is);
+      is.close();
+      cols = jo.getInt("cols");
+      rows = jo.getInt("rows");
+      width = jo.getInt("width");
+      height = jo.getInt("height");
+      sim = new Simulator(cols, rows, width, height, selecionAnimalFactory, selectionRegionFactory);
+      controller = new Controller(sim);
+      controller.loadData(jo);
+    }
+    SwingUtilities.invokeAndWait(() -> new MainWindow(controller));
   }
-
   private static void start(String[] args) throws Exception {
     initFactories();
     parseArgs(args);
@@ -261,5 +287,4 @@ public class Main {
     }
   }
 
-  
 }

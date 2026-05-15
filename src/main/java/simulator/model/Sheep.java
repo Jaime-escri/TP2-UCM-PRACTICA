@@ -51,7 +51,7 @@ public class Sheep extends Animal {
         //Si la posición está fuera del mapa, reajustarlo y normal
         this.adjustPosition();
         //Energy = 0.0 o Age = 8.0 -> DEAD
-        if(this.getAge() > 8.0 || this.getEnergy() == 0.0){
+        if(this.getAge() > MAX_AGE_SHEEP || this.getEnergy() == 0.0){
             this.setState(State.DEAD);
             return; //Para que el animal muerto no pida comida
         }
@@ -59,10 +59,6 @@ public class Sheep extends Animal {
         //Pedir comida si su estado no es DEAD
         this.askFood(dt);
     }
-
-    
-
-    
 
     //Métodos abstractos heredados
     protected void setNormalStateAction(){
@@ -72,7 +68,6 @@ public class Sheep extends Animal {
     protected void setMateStateAction(){
         this.dangerSource = null;
     }
-
     protected void setHungerStateAction(){}
     protected void setDangerStateAction(){
         this.setMateTarget(null);
@@ -125,18 +120,17 @@ public class Sheep extends Animal {
         if(this.dangerSource == null || this.getPosition().distanceTo(this.dangerSource.getPosition()) > this.getSightRange() ){
             searchDangerousAnimals();
             if (this.dangerSource == null) {
-            if (this.getDesire() < DESIRE_THRESHOLD_SHEEP) {
-                this.setState(State.NORMAL);
-            } else {
-                this.setState(State.MATE);
+                if (this.getDesire() < DESIRE_THRESHOLD_SHEEP) {
+                    this.setState(State.NORMAL);
+                } else {
+                    this.setState(State.MATE);
+                }
             }
-}
         }
     }
 
     public void updateMate(double dt){
-        if(this.getMateTarget() != null && 
-        (this.getMateTarget().getState() == State.DEAD || 
+        if(this.getMateTarget() != null && (this.getMateTarget().getState() == State.DEAD || 
         this.getPosition().distanceTo(this.getMateTarget().getPosition()) > this.getSightRange())){
             this.setMateTarget(null);
         }
@@ -181,6 +175,4 @@ public class Sheep extends Animal {
         List<Animal> dangers = this.getRegionMngr().getAnimalsInRange(this, a->a.getDiet() == Diet.CARNIVORE);
         this.dangerSource = this.dangerStrategy.select(this, dangers);
     }
-
-    
 }

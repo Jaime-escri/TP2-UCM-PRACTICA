@@ -119,4 +119,9 @@ public class Controller {
     public void removeObserver(EcoSysObserver o){
         sim.removeObserver(o);
     }
+    /*public void reset(JSONObject aux) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'reset'");
+    }
+    */
 }
