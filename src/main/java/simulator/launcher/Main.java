@@ -25,6 +25,7 @@ import simulator.factories.Builder;
 import simulator.factories.BuilderBasedFactory;
 import simulator.factories.DefaultRegionBuilder;
 import simulator.factories.DynamicSupplyRegionBuilder;
+import simulator.factories.DryRegionBuilder;
 import simulator.factories.Factory;
 import simulator.factories.SelectClosestBuilder;
 import simulator.factories.SelectFirstBuilder;
@@ -33,6 +34,8 @@ import simulator.factories.SheepBuilder;
 import simulator.factories.WolfBuilder;
 import simulator.misc.Utils;
 import simulator.model.Animal;
+import simulator.model.DryRegion;
+import simulator.model.PopulationStats;
 import simulator.model.Region;
 import simulator.model.SelectionStrategy;
 import simulator.model.Simulator;
@@ -47,14 +50,15 @@ public class Main {
   private static Simulator sim;
   private static Controller controller;
 
-  private final static Double DEFAULT_DELTA_TIME = 0.03; 
+  private final static Double DEFAULT_DELTA_TIME = 0.03;
   public static Double deltaTime = 0.1;
   private static String outFile = null;
-  private static boolean simpleViewer= false;
+  private static boolean simpleViewer = false;
   private final static Double DEFAULT_TIME = 10.0;
   private static Double time = null;
   private static String inFile = null;
   private static ExecMode mode = ExecMode.BATCH;
+  private static Double populationLimit = null;
 
   private enum ExecMode {
     BATCH("batch", "Batch mode"), GUI("gui", "Graphical User Interface mode");
@@ -76,21 +80,30 @@ public class Main {
     }
   }
 
-  //Parse
+  // Parse
   private static void parseDeltaTimeOption(CommandLine line) throws ParseException {
     String dt = line.getOptionValue("dt", "0.1");
     try {
-        deltaTime = Double.parseDouble(dt);
+      deltaTime = Double.parseDouble(dt);
     } catch (Exception e) {
-        throw new ParseException("Invalid value for delta-time: " + dt);
+      throw new ParseException("Invalid value for delta-time: " + dt);
     }
   }
+
+  private static void parsePopulationSurpass(CommandLine line){
+    if(line.hasOption("ps")){
+      populationLimit = Double.parseDouble(line.getOptionValue("ps"));
+    }
+  }
+
   private static void parseOutFileOption(CommandLine line) {
     outFile = line.getOptionValue("o");
   }
+
   private static void parseSimpleViewerOption(CommandLine line) {
     simpleViewer = line.hasOption("sv");
   }
+
   private static void parseModeOption(CommandLine line) throws ParseException {
     String modeValue = line.getOptionValue("m", "gui");
     for (ExecMode m : ExecMode.values()) {
@@ -101,6 +114,7 @@ public class Main {
     }
     throw new ParseException("Invalid mode: " + modeValue);
   }
+
   private static void parseArgs(String[] args) {
 
     // define the valid command line options
@@ -119,6 +133,7 @@ public class Main {
       parseDeltaTimeOption(line);
       parseOutFileOption(line);
       parseSimpleViewerOption(line);
+      parsePopulationSurpass(line);
 
       // if there are some remaining arguments, then something wrong is
       // provided in the command line!
@@ -137,6 +152,7 @@ public class Main {
     }
 
   }
+
   private static void parseHelpOption(CommandLine line, Options cmdLineOptions) {
     if (line.hasOption("h")) {
       HelpFormatter formatter = new HelpFormatter();
@@ -144,12 +160,14 @@ public class Main {
       System.exit(0);
     }
   }
+
   private static void parseInFileOption(CommandLine line) throws ParseException {
     inFile = line.getOptionValue("i");
     if (mode == ExecMode.BATCH && inFile == null) {
       throw new ParseException("In batch mode an input configuration file is required");
     }
   }
+
   private static void parseTimeOption(CommandLine line) throws ParseException {
     String t = line.getOptionValue("t", DEFAULT_TIME.toString());
     try {
@@ -171,6 +189,9 @@ public class Main {
     cmdLineOptions
         .addOption(Option.builder("o").longOpt("output").hasArg().desc("A file where output is written.").build());
 
+    // -ps
+    cmdLineOptions
+        .addOption(Option.builder("ps").longOpt("population-surpass").hasArg().desc("A double representing the population limit to track surpasses").build());
     // Simple viewer -sv
     cmdLineOptions.addOption(
         Option.builder("sv").longOpt("simple-viewer").desc("If present, show the graphical viewer.").build());
@@ -196,20 +217,21 @@ public class Main {
   }
 
   private static void initFactories() {
-    //strategies factory
+    // strategies factory
     List<Builder<SelectionStrategy>> selectionStrategyBuilders = new ArrayList<>();
     selectionStrategyBuilders.add(new SelectFirstBuilder());
     selectionStrategyBuilders.add(new SelectClosestBuilder());
     selectionStrategyBuilders.add(new SelectYoungestBuilder());
     selectionStrategyFactory = new BuilderBasedFactory<SelectionStrategy>(selectionStrategyBuilders);
 
-    //regions factory
+    // regions factory
     List<Builder<Region>> selectionRegionBuilders = new ArrayList<>();
     selectionRegionBuilders.add(new DefaultRegionBuilder());
     selectionRegionBuilders.add(new DynamicSupplyRegionBuilder());
-    selectionRegionFactory= new BuilderBasedFactory<Region>(selectionRegionBuilders);
+    selectionRegionBuilders.add(new DryRegionBuilder());
+    selectionRegionFactory = new BuilderBasedFactory<Region>(selectionRegionBuilders);
 
-    //animals factory
+    // animals factory
     List<Builder<Animal>> selectionAnimalBuilders = new ArrayList<>();
     selectionAnimalBuilders.add(new SheepBuilder(selectionStrategyFactory));
     selectionAnimalBuilders.add(new WolfBuilder(selectionStrategyFactory));
@@ -220,7 +242,7 @@ public class Main {
     return new JSONObject(new JSONTokener(in));
   }
 
-//Start
+  // Start
   private static void start_batch_mode() throws Exception {
     InputStream is = new FileInputStream(new File(inFile));
     JSONObject jo = loadJSONFile(is);
@@ -235,13 +257,21 @@ public class Main {
     controller.loadData(jo);
 
     OutputStream os = outFile == null ? System.out : new FileOutputStream(new File(outFile));
+    PopulationStats ps = null;
+    if (populationLimit != null) {
+      ps = new PopulationStats(populationLimit);
+      controller.addObserver(ps);
+    }
+
     controller.run(time, deltaTime, simpleViewer, os);
 
+    if(ps!= null) ps.printResults();
     if (os != System.out) {
       os.close();
     }
 
   }
+
   private static void start_GUI_mode() throws Exception {
     int cols = 20;
     int rows = 15;
@@ -249,7 +279,7 @@ public class Main {
     int height = 600;
     sim = new Simulator(cols, rows, width, height, selecionAnimalFactory, selectionRegionFactory);
     controller = new Controller(sim);
-    if(inFile != null){
+    if (inFile != null) {
       InputStream is = new FileInputStream(new File(inFile));
       JSONObject jo = loadJSONFile(is);
       is.close();
@@ -263,6 +293,7 @@ public class Main {
     }
     SwingUtilities.invokeAndWait(() -> new MainWindow(controller));
   }
+
   private static void start(String[] args) throws Exception {
     initFactories();
     parseArgs(args);
