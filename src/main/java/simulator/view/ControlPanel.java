@@ -3,8 +3,6 @@ package simulator.view;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -15,10 +13,8 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import simulator.control.Controller;
 import simulator.launcher.Main;
 
@@ -26,6 +22,7 @@ class ControlPanel extends JPanel {
 
   private Controller ctrl;
   private ChangeRegionsDialog changeRegionsDialog;
+  private AgeLimitStatistics ageLimitStatistics;
 
   private JToolBar toolBar;
   private JFileChooser fc;
@@ -38,6 +35,7 @@ class ControlPanel extends JPanel {
   JButton regions;
   JButton run;
   JButton stop;
+  JButton stats;
   JTextField dTime; //delta-time
   JSpinner nPasos; //número de pasos
 
@@ -79,7 +77,7 @@ class ControlPanel extends JPanel {
     this.viewer.setToolTipText("Viewer");
     this.viewer.setIcon(new ImageIcon(getClass().getClassLoader().getResource("viewer.png")));
     this.viewer.addActionListener((e)-> {
-        MapWindow map_window = new MapWindow(ViewUtils.getWindow(this), ctrl); //Shhhhh, no mires dentro de los parámetros, no te pongas buscón
+        MapWindow map_window = new MapWindow(ViewUtils.getWindow(this), ctrl);
 
     });
     this.toolBar.add(viewer);
@@ -135,10 +133,24 @@ class ControlPanel extends JPanel {
     this.quitButton.addActionListener((e) -> ViewUtils.quit(this));
     this.toolBar.add(quitButton);
 
+    //Stats Button
+    this.stats = new JButton();
+    this.stats.setToolTipText("Stats");
+    this.stats.setIcon(new ImageIcon(getClass().getClassLoader().getResource("stats.png")));
+    this.stats.addActionListener((e)-> {
+        ageLimitStatistics.open(ViewUtils.getWindow(this));
+    });
+    this.toolBar.add(this.stats);
+
     this.fc = new JFileChooser();
     this.fc.setCurrentDirectory(new File(System.getProperty("user.dir") + "/resources/examples"));
 
     this.changeRegionsDialog = new ChangeRegionsDialog(ctrl);
+    this.ageLimitStatistics = new AgeLimitStatistics(ctrl);
+
+    
+    
+    
 
   }
   

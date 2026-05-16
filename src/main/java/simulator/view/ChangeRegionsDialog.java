@@ -1,10 +1,7 @@
 package simulator.view;
 
 import java.util.List;
-
 import javax.swing.BoxLayout;
-import javax.swing.ComboBoxEditor;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,10 +11,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.awt.Dimension;
 import java.awt.Frame;
 import simulator.control.Controller;
@@ -41,12 +36,10 @@ class ChangeRegionsDialog extends JDialog implements EcoSysObserver {
 
   private String[] headers = { "Key", "Value", "Description" };
 
-  // TODO en caso de ser necesario, añadir los atributos aquí…
   ChangeRegionsDialog(Controller ctrl) {
     super((Frame)null, true);
     this.ctrl = ctrl;
     initGUI();
-    // TODO registrar this como observer;
     this.ctrl.addObserver(this);
   }
 
